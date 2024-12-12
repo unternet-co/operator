@@ -9,10 +9,19 @@ export function interactionsToMessages(interactions: Interaction[]) {
     });
 
     for (let output of interaction.outputs) {
-      messages.push({
-        role: 'assistant',
-        content: output.content,
-      });
+      if (output.type === 'data') {
+        messages.push({
+          role: 'system',
+          content: `Latest, relevant data for this query:\n\n${JSON.stringify(
+            output.content
+          )}`,
+        });
+      } else if (output.type === 'text') {
+        messages.push({
+          role: 'assistant',
+          content: output.content,
+        });
+      }
     }
   }
 

@@ -5,6 +5,7 @@
     "@unternet/sdk": "^0.0.6",
     "@web-applets/sdk": "file:../../web-applets/sdk",
     "dexie": "^4.0.10",
+    "openai": "^4.76.1",
     "store-thing": "^0.1.5"
   },
   "devDependencies": {

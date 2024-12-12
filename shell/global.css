@@ -76,19 +76,3 @@ body {
   padding: 0 8px;
   /* margin: 0 auto; */
 }
-
-status-bar {
-  height: 28px;
-  flex-shrink: 0;
-  border: 1px solid var(--color-border);
-  margin: 8px;
-  /* margin-bottom: 0; */
-  border-radius: 4px;
-
-  /* background: var(--color-neutral-7); */
-  padding: 2px 10px;
-  display: flex;
-  align-items: center;
-  color: var(--color-neutral-4);
-  font-size: 12px;
-}

@@ -1,0 +1,22 @@
+{
+  "name": "operator-electron",
+  "version": "0.1.3",
+  "description": "Unternet Operator.",
+  "main": "src/main.js",
+  "productName": "Operator",
+  "author": "Rupert Manfredi <rupert@unternet.co>",
+  "homepage": "https://unternet.co",
+  "scripts": {
+    "dev": "electron .",
+    "package": "todesktop build"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@todesktop/runtime": "^1.6.4",
+    "electron-is-dev": "^3.0.1"
+  },
+  "devDependencies": {
+    "@todesktop/cli": "^1.9.4",
+    "electron": "31.3.1"
+  }
+}

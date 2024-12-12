@@ -1,0 +1,10 @@
+{
+  "name": "@unternet/kernel",
+  "type": "module",
+  "dependencies": {
+    "@unternet/sdk": "^0.0.6",
+    "@web-applets/sdk": "^0.1.0",
+    "dexie": "^4.0.10",
+    "store-thing": "^0.1.5"
+  }
+}

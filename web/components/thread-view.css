@@ -1,0 +1,82 @@
+thread-view {
+  flex-grow: 1;
+  padding-bottom: 0;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+
+.splash-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-faded);
+}
+
+.interaction .page {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px inherit;
+}
+
+.interaction {
+  padding: 16px 0;
+}
+
+.interaction:last-child {
+  min-height: 100%;
+}
+
+.interaction-input {
+  padding: 6px 12px;
+  font-weight: 500;
+  background: var(--color-neutral-7);
+  border: 1px solid var(--color-border);
+  align-self: flex-start;
+  border-radius: 4px;
+}
+
+.block {
+  padding: 12px;
+  line-height: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-page);
+}
+
+.block ol {
+  margin: 8px 0;
+}
+
+.block h1,
+.block h2,
+.block h3 {
+  font-size: inherit;
+}
+
+.block ul,
+.block ol {
+  padding-left: 1.5em;
+}
+
+.block strong,
+.block b {
+  font-weight: 600;
+}
+
+.block p {
+  margin-bottom: 8px;
+}
+.block p:last-child {
+  margin: 0;
+}
+
+.block li {
+  margin-bottom: 4px;
+}
+.block li:last-child {
+  margin: 0;
+}

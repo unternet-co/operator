@@ -1,0 +1,7 @@
+top-bar {
+  height: 32px;
+  border-bottom: 1px solid #e2e5e9;
+  flex-shrink: 0;
+  -webkit-app-region: drag;
+  background: var(--color-page);
+}

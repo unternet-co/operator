@@ -16,7 +16,17 @@ export class ContextBar extends LitElement {
   }
 
   render() {
-    console.log(this.register);
-    return html`${JSON.stringify(this.register)}`;
+    const manifests = Object.values(this.register);
+
+    return html`
+      ${manifests.map((manifest) => {
+        return html`<div class="applet">
+          <img class="applet-icon" src=${manifest.icons[0].src} />
+          <span class="applet-name"
+            >${manifest.short_name ?? manifest.name}</span
+          >
+        </div>`;
+      })}
+    `;
   }
 }

@@ -1,9 +1,9 @@
 thread-view {
   flex-grow: 1;
-  padding-bottom: 0;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
+  padding-top: 8px;
 }
 
 .splash-screen {
@@ -19,15 +19,19 @@ thread-view {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 16px inherit;
+  height: 100%;
+  padding-top: 12px;
+  padding-bottom: 28px;
 }
 
-.interaction {
-  padding: 16px 0;
+.interaction + .interaction .page {
+  padding-top: 28px;
+  border-top: 0.5px solid var(--color-border);
 }
 
 .interaction:last-child {
-  min-height: 100%;
+  /* min-height: 100%; */
+  padding-bottom: 20px;
 }
 
 .interaction-input {
@@ -37,6 +41,23 @@ thread-view {
   border: 1px solid var(--color-border);
   align-self: flex-start;
   border-radius: 4px;
+}
+.data-output {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-neutral-3);
+  padding: 8px 4px;
+}
+
+.data-output .applet-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.data-output .applet-name {
+  font-weight: 500;
 }
 
 .block {
@@ -62,6 +83,24 @@ thread-view {
   padding-left: 1.5em;
 }
 
+.block code {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.block pre {
+  white-space: pre-wrap;
+  font-size: 12px;
+  line-height: 1.3em;
+  background: var(--color-neutral-8);
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.block pre code {
+  font-weight: 400;
+}
+
 .block strong,
 .block b {
   font-weight: 600;
@@ -80,3 +119,30 @@ thread-view {
 .block li:last-child {
   margin: 0;
 }
+
+/* Alt */
+
+/* .block {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.interaction .page {
+  padding-top: 36px;
+  margin: 0;
+  margin-left: 24px;
+}
+
+.interaction + .interaction .page {
+  border-top: 0.5px solid var(--color-border);
+}
+
+.interaction-input {
+  width: 600px;
+  font-weight: 400;
+  color: #555;
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+} */

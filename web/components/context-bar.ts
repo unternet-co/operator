@@ -1,18 +1,18 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import './context-bar.css';
-import { appletsRegister, type AppletsRegister } from '@unternet/kernel';
+import { appletRegister, type AppletRegister } from '@unternet/kernel';
 
 @customElement('context-bar')
 export class ContextBar extends LitElement {
   renderRoot = this;
 
   @property({ attribute: false })
-  register: AppletsRegister = {};
+  register: AppletRegister = {};
 
   connectedCallback(): void {
     super.connectedCallback();
-    appletsRegister.subscribe((register) => (this.register = register));
+    appletRegister.subscribe((register) => (this.register = register));
   }
 
   render() {

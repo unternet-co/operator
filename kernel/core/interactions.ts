@@ -10,7 +10,13 @@ interface CommandInput {
   text: string;
 }
 
-export type InteractionOutput = TextOutput;
+export type InteractionOutput = TextOutput | DataOutput;
+
+export interface DataOutput {
+  type: 'data';
+  appletUrl: string;
+  content: object;
+}
 
 export interface TextOutput {
   type: 'text';
@@ -30,6 +36,16 @@ async function fromInput(input: InteractionInput) {
     input,
     outputs: [],
   });
+}
+
+async function createDataOutput(
+  interactionId: number,
+  partialDataOutput: Omit<DataOutput, 'type'>
+) {
+  const { outputs } = await interactions.get(interactionId);
+  outputs.push({ type: 'data', ...partialDataOutput });
+  db.interactions.update(interactionId, { outputs });
+  return outputs.length - 1;
 }
 
 async function createTextOutput(
@@ -62,6 +78,7 @@ function subscribe(callback: (interactions: Interaction[]) => void) {
 
 export const interactions = {
   fromInput,
+  createDataOutput,
   createTextOutput,
   updateTextOutput,
   subscribe,

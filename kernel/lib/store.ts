@@ -1,12 +1,12 @@
 import { Store } from 'store-thing';
-import { AppletsRegister } from '../core/applets';
+import { AppletRegister } from '../core/appletRegister';
 
 export interface StoreData {
-  appletsRegister: AppletsRegister;
+  appletRegister: AppletRegister;
 }
 
 let initData: StoreData = {
-  appletsRegister: {},
+  appletRegister: {},
 };
 
 export const store = new Store('store', initData, { storage: 'local' });

@@ -9,8 +9,9 @@ async function add(url: string) {
   // TODO: Make applets.getManifest(url);
   const manifest = await loadManifest(url);
 
-  store.update((store) => {
-    store.appletsRegister[url] = manifest;
+  console.log(manifest);
+  store.update((state) => {
+    state.appletsRegister[url] = manifest;
   });
 }
 

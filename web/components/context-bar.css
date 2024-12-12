@@ -1,7 +1,26 @@
 context-bar {
   height: 32px;
-  border-bottom: 1px solid var(--color-border);
+  /* border-bottom: 1px solid var(--color-border); */
   background: var(--color-neutral-7);
   flex-shrink: 0;
   -webkit-app-region: drag;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+}
+
+context-bar .applet {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+context-bar .applet-icon {
+  width: 16px;
+}
+
+context-bar .applet-name {
+  display: block;
+  font-weight: 500;
+  font-size: 14px;
 }

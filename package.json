@@ -1,0 +1,11 @@
+{
+  "name": "@unternet/operator",
+  "private": true,
+  "workspaces": [
+    "kernel",
+    "web"
+  ],
+  "scripts": {
+    "build:web": "cd web && npm run build && cp -r dist/ ../dist"
+  }
+}

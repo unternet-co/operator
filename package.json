@@ -3,8 +3,7 @@
   "private": true,
   "workspaces": [
     "kernel",
-    "web",
-    "shell"
+    "web"
   ],
   "scripts": {
     "build:web": "cd web && npm run build && cp -r dist/ ../dist",

@@ -12,6 +12,7 @@ export class CommandBar extends LitElement {
 
     if (e.key === 'Enter') {
       e.preventDefault();
+      input.blur();
       operator.handleInput({ type: 'command', text: input.value });
       input.value = '';
     }
@@ -25,6 +26,7 @@ export class CommandBar extends LitElement {
           @keydown=${this.handleKeyDown.bind(this)}
           placeholder="Search or type command.."
           autofocus
+          autocapitalize="off"
         />
       </div>
     </div>`;

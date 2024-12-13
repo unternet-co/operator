@@ -13,8 +13,10 @@ export class AppRoot extends LitElement {
 
   render() {
     return html`
-      ${isElectron() ? html`<top-bar></top-bar>` : null}
-      <context-bar></context-bar>
+      <header>
+        ${isElectron() ? html`<top-bar></top-bar>` : null}
+        <context-bar></context-bar>
+      </header>
       <thread-view></thread-view>
       <command-bar></command-bar>
     `;

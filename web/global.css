@@ -87,6 +87,10 @@ textarea {
 body {
   background: var(--color-page-alt);
   color: var(--color-text);
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  direction: column;
+  position: fixed;
 }
 
 .page {

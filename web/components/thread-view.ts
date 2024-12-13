@@ -14,16 +14,44 @@ import { appletRegister } from '@unternet/kernel';
 export class ThreadView extends LitElement {
   renderRoot = this;
 
+  isFollowing: boolean = true;
+  prevInteractionsLength: number = 0;
+
   @property({ attribute: false })
   interactions: Interaction[] = [];
 
   connectedCallback() {
     super.connectedCallback();
     interactions.subscribe(this.updateInteractions.bind(this));
+
+    // Break out of scroll if we scroll up
+    let previousScrollY = this.scrollTop;
+    this.addEventListener('scroll', () => {
+      if (this.scrollTop < previousScrollY) {
+        this.isFollowing = false;
+      }
+      previousScrollY = this.scrollTop;
+    });
   }
 
   updateInteractions(newInteractions: Interaction[]) {
+    // On a new interaction, scroll to bottom
+    this.prevInteractionsLength = this.interactions.length;
     this.interactions = newInteractions;
+
+    // If an interaction is updated, and we're following scroll, then scroll
+    if (this.isFollowing) {
+      this.scrollTo(0, this.scrollHeight);
+    }
+  }
+
+  updated(changedProperties) {
+    super.updated(changedProperties);
+
+    if (this.prevInteractionsLength < this.interactions.length) {
+      this.scrollTo(0, this.scrollHeight);
+      this.isFollowing = true;
+    }
   }
 
   textOutputTemplate(output: TextOutput) {
@@ -41,11 +69,16 @@ export class ThreadView extends LitElement {
     </div>`;
   }
 
+  loadingTemplate() {
+    return html` <div class="loading">Thinking...</div> `;
+  }
+
   interactionTemplate(interaction: Interaction) {
     return html`
       <div class="interaction">
         <div class="page">
           <div class="interaction-input">${interaction.input.text}</div>
+          ${!interaction.outputs.length ? this.loadingTemplate() : ''}
           ${interaction.outputs.map((output) =>
             output.type === 'text'
               ? this.textOutputTemplate(output)
@@ -57,7 +90,6 @@ export class ThreadView extends LitElement {
   }
 
   render() {
-    // const interactions = [...this.interactions].reverse();
     const interactions = this.interactions;
 
     if (!interactions.length) {

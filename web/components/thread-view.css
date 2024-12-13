@@ -4,6 +4,7 @@ thread-view {
   display: flex;
   flex-direction: column;
   padding-top: 8px;
+  scroll-behavior: smooth;
 }
 
 .splash-screen {
@@ -18,37 +19,40 @@ thread-view {
 .interaction .page {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   height: 100%;
-  padding-top: 12px;
-  padding-bottom: 28px;
+  padding: 18px 12px;
 }
 
 .interaction + .interaction .page {
-  padding-top: 28px;
-  border-top: 0.5px solid var(--color-border);
+  /* border-top: 0.5px solid var(--color-border); */
 }
 
 .interaction:last-child {
-  /* min-height: 100%; */
-  padding-bottom: 20px;
+  /* min-height: 90%; */
+  /* align-self: stretch; */
 }
 
 .interaction-input {
   padding: 6px 12px;
   font-weight: 500;
-  background: var(--color-neutral-7);
+  background: var(--color-input);
   border: 1px solid var(--color-border);
   align-self: flex-start;
   border-radius: 4px;
 }
-.data-output {
+.data-output,
+.loading {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
   color: var(--color-neutral-3);
   padding: 8px 4px;
+}
+
+.loading {
+  font-size: 15px;
 }
 
 .data-output .applet-icon {
@@ -95,6 +99,7 @@ thread-view {
   background: var(--color-neutral-8);
   padding: 20px;
   border-radius: 4px;
+  word-break: break-word;
 }
 
 .block pre code {

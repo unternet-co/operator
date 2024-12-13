@@ -6,6 +6,7 @@ import { generateJson } from '../lib/openai';
 import { prompts } from '../lib/prompts';
 import { schemas } from '../lib/schemas';
 import { ActionChoice, appletInstances } from './appletInstances';
+import { AppletAction } from '@web-applets/sdk';
 
 async function init(appletUrls: string[]) {
   appletUrls.map(appletRegister.add);
@@ -35,15 +36,29 @@ async function handleInput(input: InteractionInput) {
 
     const newHistory = await interactions.all();
 
-    console.log(newHistory);
-    completeTextResponse(interactionId, newHistory);
+    completeTextResponse(
+      interactionId,
+      newHistory,
+      'Cite relevant sources with a link in brackets, e.g. ([theverge.com](https://theverge.com/...))'
+    );
   }
 }
 
-async function completeTextResponse(interactionId, history: Interaction[]) {
-  const { textStream } = await unternet.intelligence.streamText({
-    messages: interactionsToMessages(history),
-  });
+async function completeTextResponse(
+  interactionId,
+  history: Interaction[],
+  systemPrompt?: string
+) {
+  const messages = interactionsToMessages(history);
+
+  if (systemPrompt) {
+    messages.push({
+      role: 'system',
+      content: systemPrompt,
+    });
+  }
+
+  const { textStream } = await unternet.intelligence.streamText({ messages });
 
   const outputIndex = await interactions.createTextOutput(interactionId);
   let totalText = '';
@@ -55,6 +70,7 @@ async function completeTextResponse(interactionId, history: Interaction[]) {
 
 async function chooseAction(history: Interaction[]): Promise<ActionChoice> {
   const manifests = appletRegister.get();
+  let actionChoice: Partial<ActionChoice> = {};
 
   const { json: actionJson } = await generateJson({
     messages: [
@@ -68,27 +84,37 @@ async function chooseAction(history: Interaction[]): Promise<ActionChoice> {
   });
 
   console.log(actionJson);
+  let n = 0;
+  let selectedAction: AppletAction;
+  for (const url in manifests) {
+    for (const action of manifests[url].actions) {
+      if (n === actionJson.tool_id) {
+        selectedAction = action;
+        actionChoice.appletUrl = url;
+        actionChoice.actionId = action.id;
+        break;
+      }
+      n += 1;
+    }
+  }
 
-  const action = manifests[actionJson.url].actions.find(
-    (a) => (a.id = actionJson.actionId)
-  );
+  if (!actionChoice) console.error('No choice made!');
 
   const { json: paramsJson } = await generateJson({
     messages: [
       ...interactionsToMessages(history),
       {
         role: 'system',
-        content: prompts.chooseParams(action),
+        content: prompts.chooseParams(selectedAction),
       },
     ],
-    schema: schemas.params(action),
+    schema: schemas.params(selectedAction),
   });
+  actionChoice.params = paramsJson;
 
-  return {
-    appletUrl: actionJson.url,
-    actionId: actionJson.actionId,
-    params: paramsJson,
-  };
+  console.log(`[OPERATOR] Action choice made:`, actionChoice);
+
+  return actionChoice as ActionChoice;
 }
 
 async function chooseStrategy(history: Interaction[]) {

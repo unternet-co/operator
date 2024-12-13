@@ -20,14 +20,9 @@ const strategySchema = createObjectSchema({
 });
 
 const actionSchema = createObjectSchema({
-  url: {
-    type: 'string',
-    description: 'Corresponds to the "url" value of the tool.',
-  },
-  actionId: {
-    type: 'string',
-    description:
-      'The ID of the action, corresponds to the "actionId" value of the tool.',
+  tool_id: {
+    type: 'number',
+    description: 'The ID number of the chosen tool',
   },
 });
 

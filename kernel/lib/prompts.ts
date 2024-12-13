@@ -23,14 +23,14 @@ export function chooseActionPrompt(manifests: {
 }) {
   let actionString = '';
 
+  let n = 0;
   for (const url in manifests) {
     for (const action of manifests[url].actions) {
       actionString += `\n\n{
-        "url": "${url}",
-        "description": "${manifests[url].description}",
-        "actionId": "${action.id}",
-        "actionDescription": "${action.description}"
+        "tool_id": ${n},
+        "description": "${action.description}",
       }`;
+      n += 1;
     }
   }
 

@@ -1,5 +1,5 @@
 import { Message } from '@unternet/sdk';
-import OpenAI from 'openai';
+import OpenAI from 'openai/index.mjs';
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
 // TODO: Replace with Unternet API endpoint

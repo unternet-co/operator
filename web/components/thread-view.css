@@ -72,6 +72,9 @@ thread-view {
   background: var(--color-page);
 }
 
+.block a {
+  color: var(--color-text-faded);
+}
 .block ol {
   margin: 8px 0;
 }

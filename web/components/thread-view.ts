@@ -5,7 +5,7 @@ import {
   Interaction,
   interactions,
   TextOutput,
-} from '../../kernel/core/interactions';
+} from '@unternet/kernel';
 import { resolveMarkdown } from 'lit-markdown';
 import './thread-view.css';
 import { appletRegister } from '@unternet/kernel';

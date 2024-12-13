@@ -28,20 +28,21 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-neutral-9: #111;
-    --color-neutral-8: #222;
-    --color-neutral-7: #393939;
-    --color-neutral-6: #565656;
-    --color-neutral-5: #ccc;
-    --color-neutral-4: #d2d2d2;
-    --color-neutral-3: #f1f1f1;
-    --color-neutral-2: #f8f8f8;
     --color-neutral-1: #fff;
+    --color-neutral-2: #f8f8f8;
+    --color-neutral-3: #f1f1f1;
+    --color-neutral-4: #d2d2d2;
+    --color-neutral-5: #ccc;
+    --color-neutral-6: #565656;
+    --color-neutral-7: #393939;
+    --color-neutral-8: #222;
+    --color-neutral-9: #111;
 
     --color-page: var(--color-neutral-8);
     --color-page-alt: var(--color-neutral-9);
     --color-context-bar: var(--color-neutral-8);
     --color-input: var(--color-neutral-9);
+    --color-text-faded: var(--color-neutral-5);
   }
 }
 

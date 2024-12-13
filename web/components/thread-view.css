@@ -36,18 +36,23 @@ thread-view {
 .interaction-input {
   padding: 6px 12px;
   font-weight: 500;
-  background: var(--color-neutral-7);
+  background: var(--color-input);
   border: 1px solid var(--color-border);
   align-self: flex-start;
   border-radius: 4px;
 }
-.data-output {
+.data-output,
+.loading {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
   color: var(--color-neutral-3);
   padding: 8px 4px;
+}
+
+.loading {
+  font-size: 15px;
 }
 
 .data-output .applet-icon {

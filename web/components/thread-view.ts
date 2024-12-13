@@ -37,7 +37,6 @@ export class ThreadView extends LitElement {
   updateInteractions(newInteractions: Interaction[]) {
     // On a new interaction, scroll to bottom
     this.prevInteractionsLength = this.interactions.length;
-
     this.interactions = newInteractions;
 
     // If an interaction is updated, and we're following scroll, then scroll
@@ -70,11 +69,16 @@ export class ThreadView extends LitElement {
     </div>`;
   }
 
+  loadingTemplate() {
+    return html` <div class="loading">Thinking...</div> `;
+  }
+
   interactionTemplate(interaction: Interaction) {
     return html`
       <div class="interaction">
         <div class="page">
           <div class="interaction-input">${interaction.input.text}</div>
+          ${!interaction.outputs.length ? this.loadingTemplate() : ''}
           ${interaction.outputs.map((output) =>
             output.type === 'text'
               ? this.textOutputTemplate(output)

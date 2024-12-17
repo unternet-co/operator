@@ -3,8 +3,17 @@ import { applets } from '@web-applets/sdk';
 
 /* Models */
 
-export interface AppletInstance {
+export type Process = AppletProcess;
+type ProcessType = 'applet';
+
+interface BaseProcess {
   id?: number;
+  type: ProcessType;
+}
+
+export interface AppletProcess extends BaseProcess {
+  id?: number;
+  type: 'applet';
   url: string;
   data?: Record<string, unknown>;
 }
@@ -22,11 +31,8 @@ export interface ActionChoice {
 
 /* Actions */
 
-export async function createAppletInstance(
-  url: string,
-  action?: ActionDeclaration
-) {
-  const id = await db.appletInstances.add({ url });
+async function createAppletProcess(url: string, action?: ActionDeclaration) {
+  const id = await db.processes.add({ type: 'applet', url });
   if (action) {
     console.log('Dispatching create action', id);
     dispatchAction(id, action.id, action.params);
@@ -34,7 +40,7 @@ export async function createAppletInstance(
   return id;
 }
 
-export async function getAppletData(actionChoice?: ActionChoice) {
+async function runAppletWithAction(actionChoice?: ActionChoice) {
   console.log('[Operator] Loading applet.');
   const applet = await applets.load(actionChoice.appletUrl);
   console.log('[Operator] Applet loaded.');
@@ -47,14 +53,10 @@ export async function getAppletData(actionChoice?: ActionChoice) {
   return applet.data;
 }
 
-async function dispatchAction(
-  instanceId: number,
-  actionId: string,
-  params: any
-) {
-  const instance = await appletInstances.get(instanceId);
+async function dispatchAction(pid: number, actionId: string, params: any) {
+  const instance = await processes.get(pid);
   if (!instance) {
-    throw new Error(`Applet instance with ID ${instanceId} doesn't exist!`);
+    throw new Error(`Process with ID ${pid} doesn't exist!`);
   }
 
   console.log('[Operator] Loading applet.');
@@ -64,7 +66,7 @@ async function dispatchAction(
 
   applet.ondata = (data) => {
     console.log('[Operator] Updating data', data);
-    appletInstances.setData(instanceId, data);
+    processes.setAppletData(pid, data);
   };
 
   console.log('[Operator] Dispatching action:', actionId, params);
@@ -74,18 +76,18 @@ async function dispatchAction(
   return applet.data;
 }
 
-async function setData(instanceId: number, data: any) {
-  db.appletInstances.update(instanceId, { data });
+async function setAppletData(instanceId: number, data: any) {
+  db.processes.update(instanceId, { data });
 }
 
 /* Exports */
 
-export const appletInstances = {
-  create: createAppletInstance,
-  get: db.appletInstances.get.bind(db.appletInstances),
-  getAppletData,
+export const processes = {
+  get: db.processes.get.bind(db.processes),
+  createAppletProcess,
+  runAppletWithAction,
+  setAppletData,
   dispatchAction,
-  setData,
-  destroy: db.appletInstances.delete.bind(db.appletInstances),
-  clear: db.appletInstances.clear.bind(db.appletInstances),
+  destroy: db.processes.delete.bind(db.processes),
+  clear: db.processes.clear.bind(db.processes),
 };

@@ -1,10 +1,10 @@
 import Dexie, { Table } from 'dexie';
 import { Interaction } from '../core/interactions';
-import { AppletInstance } from '../core/appletInstances';
+import { Process } from '../core/processes';
 
 export class Database extends Dexie {
   interactions!: Table<Interaction, number>;
-  appletInstances!: Table<AppletInstance, number>;
+  processes!: Table<Process, number>;
 
   constructor() {
     super('operator-db');

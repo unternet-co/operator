@@ -1,5 +1,4 @@
 import { AppletAction, AppletManifest } from '@web-applets/sdk';
-import { Interaction } from '../core/interactions';
 import { strategies } from './strategies';
 
 // TODO: Prompt & description should both be part of the same object

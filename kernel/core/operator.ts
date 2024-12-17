@@ -5,7 +5,7 @@ import { appletRegister } from './appletRegister';
 import { generateJson } from '../lib/openai';
 import { prompts } from '../lib/prompts';
 import { schemas } from '../lib/schemas';
-import { ActionChoice, appletInstances } from './appletInstances';
+import { ActionChoice, processes } from './processes';
 import { AppletAction } from '@web-applets/sdk';
 
 async function init(appletUrls: string[]) {
@@ -28,7 +28,7 @@ async function handleInput(input: InteractionInput) {
     completeTextResponse(interactionId, history);
   } else if (strategy === 'RESEARCH') {
     const actionChoice = await chooseAction(history);
-    const data = await appletInstances.getAppletData(actionChoice);
+    const data = await processes.runAppletWithAction(actionChoice);
     await interactions.createDataOutput(interactionId, {
       appletUrl: actionChoice.appletUrl,
       content: data,

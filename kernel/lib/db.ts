@@ -1,17 +1,20 @@
 import Dexie, { Table } from 'dexie';
-import { Interaction } from '../core/interactions';
-import { AppletInstance } from '../core/appletInstances';
+import { Interaction } from '../modules/interactions';
+import { Process } from '../modules/processes';
+import { AppletRecord } from '../modules/applet-records';
 
 export class Database extends Dexie {
   interactions!: Table<Interaction, number>;
-  appletInstances!: Table<AppletInstance, number>;
+  processes!: Table<Process, number>;
+  appletRecords!: Table<AppletRecord, string>;
 
   constructor() {
-    super('operator-db');
+    super('@unternet/kernel:db');
 
     this.version(1).stores({
       interactions: '++id',
-      appletInstances: '++id',
+      processes: '++id',
+      appletRecords: 'url',
     });
   }
 }

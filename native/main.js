@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, shell, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const todesktop = require('@todesktop/runtime');
@@ -9,9 +9,9 @@ let mainWindow;
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+  win = new BrowserWindow({
     width: 770,
-    height: 650,
+    height: 790,
     // transparent: true,
     // vibrancy: 'under-window',
     webPreferences: {
@@ -23,12 +23,26 @@ function createWindow() {
     },
     // frame: false,
     titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 8, y: 8 },
+    trafficLightPosition: { x: 12, y: 12 },
+  });
+
+  /* Handle links */
+
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url); // Open the URL in the default system browser
+    return { action: 'deny' };
+  });
+
+  win.webContents.on('will-navigate', (event, url) => {
+    if (url !== win.webContents.getURL()) {
+      event.preventDefault(); // Prevent navigation
+      shell.openExternal(url); // Open the URL in the default system browser
+    }
   });
 
   if (!app.isPackaged) {
-    mainWindow.loadURL('http://localhost:5173');
-    mainWindow.webContents.openDevTools();
+    win.loadURL('http://localhost:5173');
+    win.webContents.openDevTools();
   } else {
     // mainWindow.loadFile(path.join(__dirname, 'index.html'));
     mainWindow.loadURL('https://operator-lquj.onrender.com/');

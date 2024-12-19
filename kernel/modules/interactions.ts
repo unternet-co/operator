@@ -10,7 +10,7 @@ interface CommandInput {
   text: string;
 }
 
-export type InteractionOutput = TextOutput | DataOutput;
+export type InteractionOutput = TextOutput | DataOutput | AppletOutput;
 
 export interface DataOutput {
   type: 'data';
@@ -21,6 +21,11 @@ export interface DataOutput {
 export interface TextOutput {
   type: 'text';
   content: string;
+}
+
+export interface AppletOutput {
+  type: 'applet';
+  processId: number;
 }
 
 export interface Interaction {
@@ -58,6 +63,16 @@ async function createTextOutput(
   return outputs.length - 1;
 }
 
+async function createAppletOutput(
+  interactionId: number,
+  processId: number
+): Promise<number> {
+  const { outputs } = await interactions.get(interactionId);
+  outputs.push({ type: 'applet', processId });
+  db.interactions.update(interactionId, { outputs });
+  return outputs.length - 1;
+}
+
 async function updateTextOutput(
   interactionId: number,
   outputIndex: number,
@@ -81,6 +96,7 @@ export const interactions = {
   createDataOutput,
   createTextOutput,
   updateTextOutput,
+  createAppletOutput,
   subscribe,
   get: db.interactions.get.bind(db.interactions),
   destroy: db.interactions.delete.bind(db.interactions),

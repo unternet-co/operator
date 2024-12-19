@@ -5,7 +5,7 @@ import './top-bar';
 import './thread-view';
 import './context-bar';
 import './command-bar';
-import { isElectron } from '../lib/utils';
+import { isElectron } from '../utils';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
@@ -13,12 +13,10 @@ export class AppRoot extends LitElement {
 
   render() {
     return html`
-      <header>
-        ${isElectron() ? html`<top-bar></top-bar>` : null}
-        <context-bar></context-bar>
-      </header>
+      ${isElectron() ? html`<top-bar></top-bar>` : null}
       <thread-view></thread-view>
       <command-bar></command-bar>
+      <context-bar></context-bar>
     `;
   }
 }

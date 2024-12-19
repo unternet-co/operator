@@ -1,32 +1,74 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { appletRecords, type AppletRecord } from '@unternet/kernel';
+import './applet-picker';
 import './context-bar.css';
-import { appletRegister, type AppletRegister } from '@unternet/kernel';
 
 @customElement('context-bar')
 export class ContextBar extends LitElement {
   renderRoot = this;
 
   @property({ attribute: false })
-  register: AppletRegister = {};
+  appletRecords: AppletRecord[] = [];
+
+  @property({ attribute: false })
+  isAppletPickerOpen: boolean = false;
 
   connectedCallback(): void {
     super.connectedCallback();
-    appletRegister.subscribe((register) => (this.register = register));
+    appletRecords.subscribe(
+      appletRecords.all,
+      (appletRecords) => (this.appletRecords = appletRecords)
+    );
+
+    window.addEventListener('mousedown', (event) => {
+      console.log('click');
+      const target = event.target as Node;
+      const appletPickerNode = this.querySelector('applet-picker');
+      const buttonNode = this.querySelector('button');
+      if (
+        appletPickerNode &&
+        this.isAppletPickerOpen &&
+        target !== appletPickerNode &&
+        target !== buttonNode &&
+        !appletPickerNode.contains(target)
+      ) {
+        this.toggleAppletPicker();
+      }
+    });
+  }
+
+  appletTemplate() {
+    return html`
+      ${this.appletRecords.map((record) => {
+        return html`<li class="applet-item">
+          <img class="applet-icon" src=${record.manifest.icons[0].src} />
+          <span class="applet-name"
+            >${record.manifest.short_name ?? record.manifest.name}</span
+          >
+        </li>`;
+      })}
+    `;
+  }
+
+  toggleAppletPicker() {
+    this.isAppletPickerOpen = !this.isAppletPickerOpen;
   }
 
   render() {
-    const manifests = Object.values(this.register);
-
     return html`
-      ${manifests.map((manifest) => {
-        return html`<div class="applet">
-          <img class="applet-icon" src=${manifest.icons[0].src} />
-          <span class="applet-name"
-            >${manifest.short_name ?? manifest.name}</span
-          >
-        </div>`;
-      })}
+      <ul class="applets-list">
+        ${this.appletTemplate()}
+      </ul>
+      <div class="add-applet-container">
+        ${this.isAppletPickerOpen ? html`<applet-picker></applet-picker>` : ''}
+        <button
+          @mousedown=${this.toggleAppletPicker.bind(this)}
+          class="icon-button"
+        >
+          <img src="/icons/toolbox.svg" />
+        </button>
+      </div>
     `;
   }
 }

@@ -1,4 +1,3 @@
-import { Message } from '@unternet/sdk';
 import OpenAI from 'openai/index.mjs';
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
@@ -16,7 +15,7 @@ interface GenerateJsonParams {
 export async function generateJson({ messages, schema }: GenerateJsonParams) {
   const completion = await openai.beta.chat.completions.parse({
     // model: 'gpt-4o-2024-08-06',
-    model: 'gpt-4o-mini-2024-07-18',
+    model: 'gpt-4o-mini',
     messages,
     response_format: {
       type: 'json_schema',

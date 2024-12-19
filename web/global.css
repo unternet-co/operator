@@ -68,21 +68,22 @@ body {
   margin: 0;
   overflow: hidden;
   overscroll-behavior: contain;
+  user-select: none;
 }
 
 body,
 input,
 textarea {
   color: var(--color-neutral-1);
-  font-family: 'Source Sans 3', system-ui, sans-serif;
-  font-size: 15px;
+  font-family: 'iA Writer Quattro S', system-ui, sans-serif;
+  font-size: 13px;
 
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-smooth: always;
+  /* -webkit-font-smoothing: antialiased; */
+  /* -moz-osx-font-smoothing: grayscale; */
+  /* font-smooth: always; */
 }
 
 body {
@@ -92,17 +93,29 @@ body {
   display: flex;
   direction: column;
   position: fixed;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .page {
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   padding: 0 12px;
   margin: 0 auto;
 }
 
-/* Alt */
+.hidden {
+  display: none;
+}
 
-/* body {
-  font-size: 16px;
-} */
+.icon-button {
+  background: none;
+  border: none;
+  border-radius: 100%;
+  aspect-ratio: 1/1;
+}
+.icon-button:hover {
+  background: var(--color-neutral-7);
+}
+.icon-button img {
+  pointer-events: none;
+}

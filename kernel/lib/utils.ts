@@ -1,6 +1,9 @@
-import { Interaction } from '../core/interactions';
+import { AppletRecord } from '../modules/applet-records';
+import { Interaction } from '../modules/interactions';
+import { Process, processes } from '../modules/processes';
+import { IndexedAction } from './types';
 
-export function interactionsToMessages(interactions: Interaction[]) {
+export async function interactionsToMessages(interactions: Interaction[]) {
   let messages = [];
   for (let interaction of interactions) {
     messages.push({
@@ -21,9 +24,50 @@ export function interactionsToMessages(interactions: Interaction[]) {
           role: 'assistant',
           content: output.content,
         });
+      } else if (output.type === 'applet') {
+        const process: Process = await processes.get(output.processId);
+        messages.push({
+          role: 'system',
+          content: `Data from tool:\n\n${JSON.stringify(process.data)}`,
+        });
       }
     }
   }
 
   return messages;
+}
+
+export function createObjectSchema(properties: object) {
+  return {
+    type: 'object',
+    required: Object.keys(properties),
+    properties,
+    additionalProperties: false,
+  };
+}
+
+export function indexAppletActions(records: AppletRecord[]): IndexedAction[] {
+  let index = 0;
+  const indexedActions: IndexedAction[] = [];
+  for (const record of records) {
+    for (const action of record.manifest.actions) {
+      indexedActions.push({
+        key: `TOOL-${index}`,
+        appletUrl: record.url,
+        action,
+      });
+      index += 1;
+    }
+  }
+
+  return indexedActions;
+}
+
+export function normalizeUrl(url, defaultProtocol: 'http' | 'https' = 'https') {
+  try {
+    const hasProtocol = /^[a-zA-Z]+:\/\//.test(url);
+    return hasProtocol ? url : `${defaultProtocol}://${url}`;
+  } catch (error) {
+    return null;
+  }
 }

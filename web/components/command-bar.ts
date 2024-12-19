@@ -1,5 +1,5 @@
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import './command-bar.css';
 import { operator } from '@unternet/kernel';
 
@@ -12,7 +12,7 @@ export class CommandBar extends LitElement {
 
     if (e.key === 'Enter') {
       e.preventDefault();
-      input.blur();
+      // input.blur();
       operator.handleInput({ type: 'command', text: input.value });
       input.value = '';
     }

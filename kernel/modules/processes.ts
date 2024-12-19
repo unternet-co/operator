@@ -1,5 +1,6 @@
+import { liveQuery, Table } from 'dexie';
 import db from '../lib/db';
-import { applets } from '@web-applets/sdk';
+import { AppletDataEvent, applets } from '@web-applets/sdk';
 
 /* Models */
 
@@ -31,12 +32,12 @@ export interface ActionChoice {
 
 /* Actions */
 
-async function createAppletProcess(url: string, action?: ActionDeclaration) {
-  const id = await db.processes.add({ type: 'applet', url });
-  if (action) {
-    console.log('Dispatching create action', id);
-    dispatchAction(id, action.id, action.params);
-  }
+async function createAppletProcess(actionChoice: ActionChoice) {
+  const id = await db.processes.add({
+    type: 'applet',
+    url: actionChoice.appletUrl,
+  });
+  dispatchAction(id, actionChoice.actionId, actionChoice.params);
   return id;
 }
 
@@ -53,20 +54,24 @@ async function runAppletWithAction(actionChoice?: ActionChoice) {
   return applet.data;
 }
 
-async function dispatchAction(pid: number, actionId: string, params: any) {
-  const instance = await processes.get(pid);
+async function dispatchAction(
+  processId: number,
+  actionId: string,
+  params: any
+) {
+  const instance = await processes.get(processId);
   if (!instance) {
-    throw new Error(`Process with ID ${pid} doesn't exist!`);
+    throw new Error(`Process with ID ${processId} doesn't exist!`);
   }
 
   console.log('[Operator] Loading applet.');
   const applet = await applets.load(instance.url);
   console.log('[Operator] Applet loaded.');
-  applet.data = instance.data;
+  if (instance.data) applet.data = instance.data;
 
-  applet.ondata = (data) => {
-    console.log('[Operator] Updating data', data);
-    processes.setAppletData(pid, data);
+  applet.ondata = (event: AppletDataEvent) => {
+    console.log('[Operator] Updating data', event.data);
+    processes.setAppletData(processId, event.data);
   };
 
   console.log('[Operator] Dispatching action:', actionId, params);
@@ -80,6 +85,15 @@ async function setAppletData(instanceId: number, data: any) {
   db.processes.update(instanceId, { data });
 }
 
+/* Subscriptions */
+
+function subscribe(
+  query: () => Process[] | Process,
+  callback: (processes: Process[] | Process) => void
+) {
+  return liveQuery(query).subscribe(callback);
+}
+
 /* Exports */
 
 export const processes = {
@@ -90,4 +104,5 @@ export const processes = {
   dispatchAction,
   destroy: db.processes.delete.bind(db.processes),
   clear: db.processes.clear.bind(db.processes),
+  subscribe,
 };

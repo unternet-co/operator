@@ -4,6 +4,7 @@ thread-view {
   display: flex;
   flex-direction: column-reverse;
   scroll-behavior: smooth;
+  padding: 8px 0;
 }
 
 .splash-screen {

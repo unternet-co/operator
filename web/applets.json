@@ -1,1 +1,5 @@
-["https://applets.unternet.co/web", "http://localhost:5174/"]
+[
+  "https://applets.unternet.co/web",
+  "https://applets.unternet.co/wolfram-alpha",
+  "https://applets.unternet.co/calculator"
+]

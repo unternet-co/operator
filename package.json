@@ -6,9 +6,10 @@
     "web"
   ],
   "scripts": {
+    "package": "cd native && npm run package",
     "build:web": "cd web && npm run build && cp -r dist/ ../dist",
     "dev:web": "cd web && npm run dev",
-    "dev:desktop": "concurrently 'cd desktop && npm run dev' 'npm run dev:web'"
+    "dev": "concurrently 'cd native && npm run dev' 'npm run dev:web'"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"

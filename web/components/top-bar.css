@@ -1,7 +1,17 @@
 top-bar {
   height: 42px;
+  display: flex;
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
   -webkit-app-region: drag;
   background: var(--color-page);
+  padding-left: 90px;
+}
+
+tab-handle {
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
 }

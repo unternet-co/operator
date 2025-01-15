@@ -1,15 +1,14 @@
-import { generateJson } from '../ext/openai';
+import { generateJson } from './model';
 import {
   createObjectSchema,
   indexAppletActions,
   interactionsToMessages,
 } from './utils';
 import { Interaction } from '../modules/interactions';
-import { unternet } from '../ext/unternet';
 import { ActionChoice } from '../modules/processes';
 import { AppletRecord } from '../modules/applet-records';
 import { streamText } from 'ai';
-import { openai } from './models';
+import { openai } from './model';
 
 interface completionsOptions {
   system?: string;

@@ -45,7 +45,7 @@ function createWindow() {
     win.webContents.openDevTools();
   } else {
     // mainWindow.loadFile(path.join(__dirname, 'index.html'));
-    mainWindow.loadURL('https://operator-lquj.onrender.com/');
+    win.loadURL('https://operator.unternet.co');
   }
 }
 

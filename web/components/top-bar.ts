@@ -8,5 +8,6 @@ export class TopBar extends LitElement {
 
   render() {
     return html``;
+    return html`<tab-handle>New tab</tab-handle>`;
   }
 }

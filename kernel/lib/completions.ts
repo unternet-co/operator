@@ -124,15 +124,15 @@ async function chooseActions(
         type: 'object',
         description: `An object that adheres to the chosen tool's params schema.`,
         properties: {
-          _type: {
+          key: {
             type: 'string',
-            description: 'Unique discriminator for the params schema.',
+            description: 'Unique discriminator key for the params schema.',
             enum: [indexedAction.key],
           },
           ...indexedAction.action.params,
         },
         additionalProperties: false,
-        required: ['_type', ...Object.keys(indexedAction.action.params)],
+        required: ['key', ...Object.keys(indexedAction.action.params)],
       };
     });
 
@@ -159,7 +159,7 @@ async function chooseActions(
           },
           params: {
             anyOf: paramsSchemas,
-            discriminator: { propertyName: '_type' },
+            discriminator: { propertyName: 'key' },
           },
         },
       },

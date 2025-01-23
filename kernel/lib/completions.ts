@@ -94,23 +94,22 @@ async function chooseActions(
   const actions = createActionSchemas(tools);
 
   const prompt = `\
-    In this environment you have access to a set of tools you can use to answer the user's question.
-    Here are the functions available in JSONSchema format:
+    In this environment you have access to a set of tools. Here are the functions available in JSONSchema format:
     ${actions}
+    Choose one or more functions to call to respond to the user's query.
   `;
 
   const actionChoiceSchema = (action: ActionDefinition) => {
-    const schema = {
+    const schema: any = {
       type: 'object',
       properties: {
         id: {
           type: 'string',
           enum: [action.id],
         },
-        arguments: action.parameters,
       },
       addtionalProperties: false,
-      required: ['id', 'arguments'],
+      required: ['id'],
     };
 
     if (action.parameters) {
@@ -121,8 +120,29 @@ async function chooseActions(
     return schema;
   };
 
-  const responseSchema: any[] = actions.map(actionChoiceSchema);
+  const responseSchema = {
+    type: 'json_schema',
+    json_schema: {
+      name: 'action_Choice',
+      schema: {
+        type: 'object',
+        properties: {
+          functions: {
+            type: 'array',
+            items: {
+              oneOf: actions.map(actionChoiceSchema),
+            },
+          },
+        },
+        required: ['functions'],
+        additionalProperties: false,
+      },
+      strict: true,
+    },
+  };
+
   const messages = await interactionsToMessages(history);
+  console.log(responseSchema);
 
   const { json } = await generateJson({
     messages: [
@@ -141,7 +161,7 @@ async function chooseActions(
       url,
       actionId,
       arguments: choice.arguments,
-    };
+    } as ActionChoice;
   });
 }
 

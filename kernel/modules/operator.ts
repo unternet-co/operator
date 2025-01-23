@@ -10,7 +10,7 @@ export const strategies = {
 };
 
 async function init(appletUrls: string[]) {
-  appletUrls.map((url) => tools.register('applet', url));
+  appletUrls.map((url) => tools.register(url));
 }
 
 async function handleInput(input: InteractionInput) {
@@ -48,7 +48,7 @@ async function handleInput(input: InteractionInput) {
     console.log(`[OPERATOR] Chosen actions: ${logMessage}`);
 
     for await (const actionChoice of actionChoices) {
-      const data = await processes.runAppletWithAction(actionChoice);
+      const data = await processes.runAction(actionChoice);
       await interactions.createDataOutput(interactionId, {
         appletUrl: actionChoice.url,
         content: data,
@@ -77,8 +77,9 @@ async function handleInput(input: InteractionInput) {
     const logMessage = `${actionChoice.url}#${actionChoice.actionId}`;
     console.log(`[OPERATOR]  Chosen action: ${logMessage}`);
 
-    const processId = await processes.createAppletProcess(actionChoice);
-    interactions.createAppletOutput(interactionId, processId);
+    const processId = await processes.createWebProcess(actionChoice.url);
+    await processes.dispatchAction(processId, actionChoice);
+    interactions.createWebOutput(interactionId, processId);
   }
 }
 
@@ -86,3 +87,15 @@ export const operator = {
   init,
   handleInput,
 };
+
+/**
+ * tool:
+ * createProcess (optional -> describes how a process works)
+ * dispatchAction (optional -> describes how to dispatch actions to a process)
+ * runAction (optional -> describes how to make a call & do something or get a response)
+ *
+ * The only processes you can dispatch an action to right now are applets, maybe servlets later.
+ *
+ * Can an applet be a source too?
+ * Ah default actions! By default can open a page, or query it (so long as a web page). Can override the query action if you want.
+ */

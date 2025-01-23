@@ -1,42 +1,29 @@
-import { liveQuery, Table } from 'dexie';
+import { liveQuery } from 'dexie';
 import db from '../lib/db';
 import { ActionChoice } from '../lib/types';
 import { AppletDataEvent, applets } from '@web-applets/sdk';
+import { ToolDefinition, tools } from './tools';
 
 /* Models */
 
-export type Process = AppletProcess;
-type ProcessType = 'applet';
+export type Process = WebProcess;
+type ProcessType = 'web';
 
 interface BaseProcess {
   id?: number;
   type: ProcessType;
 }
 
-export interface AppletProcess extends BaseProcess {
+export interface WebProcess extends BaseProcess {
   id?: number;
-  type: 'applet';
+  type: 'web';
   url: string;
   data?: Record<string, unknown>;
 }
 
-export interface ActionDeclaration {
-  id: string;
-  params: any;
-}
-
 /* Actions */
 
-async function createAppletProcess(actionChoice: ActionChoice) {
-  const id = await db.processes.add({
-    type: 'applet',
-    url: actionChoice.url,
-  });
-  dispatchAction(id, actionChoice.actionId, actionChoice.arguments);
-  return id;
-}
-
-async function runAppletWithAction(actionChoice?: ActionChoice) {
+async function runAction(actionChoice: ActionChoice) {
   console.log('[Operator] Loading applet.');
   const applet = await applets.load(actionChoice.url);
   console.log('[Operator] Applet loaded.');
@@ -49,11 +36,18 @@ async function runAppletWithAction(actionChoice?: ActionChoice) {
   return applet.data;
 }
 
-async function dispatchAction(
-  processId: number,
-  actionId: string,
-  params: any
-) {
+async function createWebProcess(url: string, actionChoice?: ActionChoice) {
+  const id = await db.processes.add({
+    type: 'web',
+    url,
+  });
+  if (actionChoice) dispatchAction(id, actionChoice);
+  return id;
+}
+
+async function runWebResourceAction(actionChoice?: ActionChoice) {}
+
+async function dispatchAction(processId: number, actionChoice: ActionChoice) {
   const instance = await processes.get(processId);
   if (!instance) {
     throw new Error(`Process with ID ${processId} doesn't exist!`);
@@ -69,8 +63,12 @@ async function dispatchAction(
     processes.setAppletData(processId, event.data);
   };
 
-  console.log('[Operator] Dispatching action:', actionId, params);
-  await applet.dispatchAction(actionId, params);
+  console.log(
+    '[Operator] Dispatching action:',
+    actionChoice.actionId,
+    actionChoice.arguments
+  );
+  await applet.dispatchAction(actionChoice.actionId, actionChoice.arguments);
   applet.ondata = () => {};
 
   return applet.data;
@@ -93,8 +91,9 @@ function subscribe(
 
 export const processes = {
   get: db.processes.get.bind(db.processes),
-  createAppletProcess,
-  runAppletWithAction,
+  createWebProcess,
+  runAction,
+  runWebResourceAction,
   setAppletData,
   dispatchAction,
   destroy: db.processes.delete.bind(db.processes),

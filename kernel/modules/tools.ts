@@ -1,10 +1,10 @@
-import { loadManifest, ManifestIcon } from '@web-applets/sdk';
-import { normalizeUrl } from '../lib/utils';
+import { ManifestIcon } from '@web-applets/sdk';
+import { getMetadata, normalizeUrl } from '../lib/utils';
 import db from '../lib/db';
 import { liveQuery } from 'dexie';
 import { JSONSchema } from '../lib/types';
 
-export type ToolType = 'applet' | 'web_resource';
+export type ToolType = 'web-applet' | 'web-resource';
 
 export interface ToolDefinition {
   type: ToolType;
@@ -22,52 +22,73 @@ export interface ActionDefinition {
   parameters?: JSONSchema;
 }
 
-const webResourceActions: ActionDefinition[] = [
-  {
-    id: 'query',
-    description: 'Search the contents of this domain.',
-    parameters: {
-      type: 'object',
-      properties: {
-        query: {
-          type: 'string',
-          description: 'The search query.',
-        },
-      },
-      required: ['query'],
-    },
-  },
-];
-
-async function register(type: ToolType, url: string) {
+async function register(url: string) {
   if (url.includes('localhost')) {
     url = normalizeUrl(url, 'http');
   } else {
     url = normalizeUrl(url);
   }
 
-  if (type === 'applet') {
-    const manifest = await loadManifest(url);
-    if (manifest && manifest.actions) {
-      db.tools.put({
-        type: 'applet',
-        url,
-        name: manifest.name,
-        short_name: manifest.short_name,
-        icons: manifest.icons,
-        description: manifest.description,
-        actions: manifest.actions,
+  const metadata = await getMetadata(url);
+
+  // TODO: Later, might want to have indexing work for web applets too!
+  // Maybe just one "web" process, which optionally has actions?
+  // Maybe put the protocol on the actions themselves, like "system" or "search" or "web-applets"
+  const tool: ToolDefinition = {
+    type: 'web-resource',
+    url,
+    name: metadata.name,
+    short_name: metadata.short_name,
+    icons: metadata.icons,
+    description: metadata.description,
+  };
+
+  if (metadata.actions) {
+    tool.type = 'web-applet';
+    tool.actions = metadata.actions;
+  }
+
+  db.tools.put(tool);
+}
+
+async function getActions() {
+  const allTools = await tools.all();
+
+  let actions = [];
+  // const searchAction = {
+  //   id: 'search',
+  //   description: 'Search the web & specific domains.',
+  //   parameters: {
+  //     id: `search`,
+  //     description: `Conduct a web search on this website's pages.\nWebsite description: ${metadata.description}.`,
+  //     parameters: {
+  //       type: 'object',
+  //       properties: {
+  //         query: {
+  //           type: 'string',
+  //           description: 'The search query.',
+  //         },
+  //       },
+  //       required: ['query'],
+  //     },
+  //   },
+  // };
+
+  for (const tool of allTools) {
+    if (tool.type === 'web-resource') {
+      continue;
+    }
+
+    for (const action of tool.actions) {
+      actions.push({
+        id: `${tool.url}#${action.id}`,
+        description: `${tool.description}\n\n${action.description}`,
+        parameters: action.parameters,
       });
     }
-  } else if (type === 'web_resource') {
-    db.tools.put({
-      type: 'web_resource',
-      url,
-      actions: webResourceActions,
-    });
-  } else {
-    throw new TypeError('Tool type value is invalid.');
   }
+
+  return actions;
 }
 
 function all() {
@@ -84,6 +105,7 @@ function subscribe(
 export const tools = {
   register,
   all,
+  getActions,
   get: db.tools.get.bind(db.tools),
   delete: db.tools.delete.bind(db.tools),
   subscribe,

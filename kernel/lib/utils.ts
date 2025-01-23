@@ -2,6 +2,7 @@ import { ToolDefinition } from '../modules/tools';
 import { Interaction } from '../modules/interactions';
 import { Process, processes } from '../modules/processes';
 import { IndexedAction } from './types';
+import { loadManifest } from '@web-applets/sdk';
 
 export async function interactionsToMessages(interactions: Interaction[]) {
   let messages = [];
@@ -70,22 +71,11 @@ export function createActionSchemas(tools: ToolDefinition[]) {
   return schemas;
 }
 
-// export function indexAppletActions(records: ToolDefinition[]): IndexedAction[] {
-//   let index = 0;
-//   const indexedActions: IndexedAction[] = [];
-//   for (const record of records) {
-//     for (const action of record.manifest.actions) {
-//       indexedActions.push({
-//         key: `TOOL-${index}`,
-//         appletUrl: record.url,
-//         action,
-//       });
-//       index += 1;
-//     }
-//   }
-
-//   return indexedActions;
-// }
+export async function getMetadata(url: string) {
+  const manifest = await loadManifest(url);
+  // TODO: Fetch metadata from normal sites
+  if (manifest) return manifest;
+}
 
 export function normalizeUrl(url, defaultProtocol: 'http' | 'https' = 'https') {
   try {

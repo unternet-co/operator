@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
-  AppletRecord,
+  ToolDefinition,
   DataOutput,
   Interaction,
   interactions,
@@ -9,7 +9,7 @@ import {
 } from '@unternet/kernel';
 import { resolveMarkdown } from 'lit-markdown';
 import './thread-view.css';
-import { appletRecords } from '@unternet/kernel';
+import { tools } from '@unternet/kernel';
 import './applet-view';
 import { AppletOutput } from '@unternet/kernel/modules/interactions';
 import { observe } from '@compactjs/chatscroll';
@@ -21,17 +21,14 @@ export class ThreadView extends LitElement {
 
   isFollowing: boolean = true;
   prevInteractionsLength: number = 0;
-  appletRecords: AppletRecord[] = [];
+  tools: ToolDefinition[] = [];
 
   @property({ attribute: false })
   interactions: Interaction[] = [];
 
   connectedCallback() {
     super.connectedCallback();
-    appletRecords.subscribe(
-      appletRecords.all,
-      this.updateAppletRecords.bind(this)
-    );
+    tools.subscribe(tools.all, this.updateTools.bind(this));
     interactions.subscribe(this.updateInteractions.bind(this));
     observe(this);
 
@@ -45,8 +42,8 @@ export class ThreadView extends LitElement {
     // });
   }
 
-  updateAppletRecords(newAppletRecords: AppletRecord[]) {
-    this.appletRecords = newAppletRecords;
+  updateTools(newTools: ToolDefinition[]) {
+    this.tools = newTools;
   }
 
   updateInteractions(newInteractions: Interaction[]) {
@@ -74,16 +71,12 @@ export class ThreadView extends LitElement {
   }
 
   dataOutputTemplate(output: DataOutput) {
-    const record = this.appletRecords.find(
-      (record) => record.url === output.appletUrl
-    );
+    const tool = this.tools.find((tool) => tool.url === output.appletUrl);
     return html`<div class="data-output">
-      <img class="applet-icon" src=${record.manifest.icons[0].src} />
+      <img class="applet-icon" src=${tool.icons[0].src} />
       <div class="description">
         Searched using
-        <span class="applet-name"
-          >${record.manifest.short_name || record.manifest.name}</span
-        >
+        <span class="applet-name">${tool.short_name || tool.name}</span>
       </div>
     </div>`;
   }

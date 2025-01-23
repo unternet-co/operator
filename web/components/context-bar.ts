@@ -1,6 +1,6 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { appletRecords, type AppletRecord } from '@unternet/kernel';
+import { tools, type ToolDefinition } from '@unternet/kernel';
 import './applet-picker';
 import './context-bar.css';
 
@@ -9,20 +9,16 @@ export class ContextBar extends LitElement {
   renderRoot = this;
 
   @property({ attribute: false })
-  appletRecords: AppletRecord[] = [];
+  tools: ToolDefinition[] = [];
 
   @property({ attribute: false })
   isAppletPickerOpen: boolean = false;
 
   connectedCallback(): void {
     super.connectedCallback();
-    appletRecords.subscribe(
-      appletRecords.all,
-      (appletRecords) => (this.appletRecords = appletRecords)
-    );
+    tools.subscribe(tools.all, (tools) => (this.tools = tools));
 
     window.addEventListener('mousedown', (event) => {
-      console.log('click');
       const target = event.target as Node;
       const appletPickerNode = this.querySelector('applet-picker');
       const buttonNode = this.querySelector('button');
@@ -40,12 +36,10 @@ export class ContextBar extends LitElement {
 
   appletTemplate() {
     return html`
-      ${this.appletRecords.map((record) => {
+      ${this.tools.map((tool) => {
         return html`<li class="applet-item">
-          <img class="applet-icon" src=${record.manifest.icons[0].src} />
-          <span class="applet-name"
-            >${record.manifest.short_name ?? record.manifest.name}</span
-          >
+          <img class="applet-icon" src=${tool.icons && tool.icons[0].src} />
+          <span class="applet-name">${tool.short_name ?? tool.name}</span>
         </li>`;
       })}
     `;

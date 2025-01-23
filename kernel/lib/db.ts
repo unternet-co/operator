@@ -14,7 +14,7 @@ export class Database extends Dexie {
     this.version(1).stores({
       interactions: '++id',
       processes: '++id',
-      appletRecords: 'url',
+      tools: 'url',
     });
   }
 }

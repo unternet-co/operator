@@ -63,12 +63,12 @@ async function createTextOutput(
   return outputs.length - 1;
 }
 
-async function createAppletOutput(
+async function createWebOutput(
   interactionId: number,
   processId: number
 ): Promise<number> {
   const { outputs } = await interactions.get(interactionId);
-  outputs.push({ type: 'applet', processId });
+  outputs.push({ type: 'web', processId });
   db.interactions.update(interactionId, { outputs });
   return outputs.length - 1;
 }
@@ -96,7 +96,7 @@ export const interactions = {
   createDataOutput,
   createTextOutput,
   updateTextOutput,
-  createAppletOutput,
+  createWebOutput,
   subscribe,
   get: db.interactions.get.bind(db.interactions),
   destroy: db.interactions.delete.bind(db.interactions),

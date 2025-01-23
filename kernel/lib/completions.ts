@@ -1,12 +1,13 @@
 import { generateJson } from './model';
 import {
+  createActionSchemas,
   createObjectSchema,
-  indexAppletActions,
+  decodeActionId,
   interactionsToMessages,
 } from './utils';
 import { Interaction } from '../modules/interactions';
-import { ActionChoice } from '../modules/processes';
-import { AppletRecord } from '../modules/applet-records';
+import { ActionChoice } from '../lib/types';
+import { ActionDefinition, ToolDefinition } from '../modules/tools';
 import { streamText } from 'ai';
 import { openai } from './model';
 
@@ -42,28 +43,16 @@ async function streamResponse(
 async function chooseStrategy(
   history: Interaction[],
   strategies: { [key: string]: string },
-  applets?: AppletRecord[]
+  tools: ToolDefinition[]
 ) {
-  const indexedActions = indexAppletActions(applets);
-
-  const strategyString = Object.keys(strategies)
-    .map((strategy) => {
-      return `- ${strategy}: ${strategies[strategy]}`;
-    })
-    .join('\n');
+  const actions = createActionSchemas(tools);
 
   const prompt = `\
-    You are an AI assistant, tasked with responding to the user's commands. You are able to use one of the following tools in your answer.
-
-    AVAILABLE TOOLS:
-
-    ${JSON.stringify(indexedActions)}
-
-    Now, with the above available tools in mind, choose from one of the following strategies to use while handling the user's query.
-    
-    STRATEGIES:
-    
-    \n\n${strategyString}\
+    In this environment you have access to a set of tools you can use to answer the user's question.
+    Here are the functions available in JSONSchema format:
+    ${JSON.stringify(actions)}
+    With the above available tools in mind, choose from one of the following strategies to use while handling the user's query:
+    ${JSON.stringify(strategies)}\
   `;
 
   const possibleValues = Object.keys(strategies)
@@ -97,75 +86,42 @@ async function chooseStrategy(
 
 async function chooseActions(
   history: Interaction[],
-  applets: AppletRecord[],
+  tools: ToolDefinition[],
   num?: number
-) {
-  const indexedActions = indexAppletActions(applets);
-
-  const actionDescriptions = indexedActions.map((x) => {
-    return {
-      id: x.key,
-      description: x.action.description,
-      params: x.action.params,
-    };
-  });
-  const actionsString = JSON.stringify(actionDescriptions, null, 2);
-
-  num = num || 0;
+): Promise<ActionChoice[]> {
+  num = num || 1;
+  // Turns all actions into flat list, with id -> `${url}#${actionId}`
+  const actions = createActionSchemas(tools);
 
   const prompt = `\
-    Choose from one of the following tools to use, and fill out the appropriate parameters, in order to get information to answer the user's query.\n\n${actionsString}\
+    In this environment you have access to a set of tools you can use to answer the user's question.
+    Here are the functions available in JSONSchema format:
+    ${actions}
   `;
 
-  let paramsSchemas: any[] = indexedActions
-    .filter((indexedAction) => indexedAction.action.params)
-    .map((indexedAction) => {
-      return {
-        type: 'object',
-        description: `An object that adheres to the chosen tool's params schema.`,
-        properties: {
-          key: {
-            type: 'string',
-            description: 'Unique discriminator key for the params schema.',
-            enum: [indexedAction.key],
-          },
-          ...indexedAction.action.params,
+  const actionChoiceSchema = (action: ActionDefinition) => {
+    const schema = {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string',
+          enum: [action.id],
         },
-        additionalProperties: false,
-        required: ['key', ...Object.keys(indexedAction.action.params)],
-      };
-    });
-
-  paramsSchemas = [
-    ...paramsSchemas,
-    {
-      type: 'null',
-      description: 'Null, for when a tool has no schema.',
-    },
-  ];
-
-  const schema = createObjectSchema({
-    choices: {
-      type: 'array',
-      description: `An array of the chosen tools, and filled out params. Array must have a length of ${num} or less.`,
-      items: {
-        type: 'object',
-        required: ['id', 'params'],
-        additionalProperties: false,
-        properties: {
-          id: {
-            type: 'string',
-            description: `Must be one of the above tool ids`,
-          },
-          params: {
-            anyOf: paramsSchemas,
-            discriminator: { propertyName: 'key' },
-          },
-        },
+        arguments: action.parameters,
       },
-    },
-  });
+      addtionalProperties: false,
+      required: ['id', 'arguments'],
+    };
 
+    if (action.parameters) {
+      schema.properties.arguments = action.parameters;
+      schema.required.push('arguments');
+    }
+
+    return schema;
+  };
+
+  const responseSchema: any[] = actions.map(actionChoiceSchema);
   const messages = await interactionsToMessages(history);
 
   const { json } = await generateJson({
@@ -176,25 +132,25 @@ async function chooseActions(
         content: prompt,
       },
     ],
-    schema,
+    schema: responseSchema,
   });
 
   return json.choices.map((choice) => {
-    const indexedAction = indexedActions.find((a) => a.key === choice.id);
+    const [url, actionId] = decodeActionId(choice.id);
     return {
-      appletUrl: indexedAction.appletUrl,
-      actionId: indexedAction.action.id,
-      params: choice.params,
+      url,
+      actionId,
+      arguments: choice.arguments,
     };
   });
 }
 
 async function chooseAction(
   history: Interaction[],
-  applets: AppletRecord[]
+  tools: ToolDefinition[]
 ): Promise<ActionChoice> {
-  const actions = await chooseActions(history, applets, 1);
-  return actions[0];
+  const choices = await chooseActions(history, tools, 1);
+  return choices[0];
 }
 
 export const completions = {

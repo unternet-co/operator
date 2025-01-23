@@ -1,12 +1,12 @@
 import Dexie, { Table } from 'dexie';
 import { Interaction } from '../modules/interactions';
 import { Process } from '../modules/processes';
-import { AppletRecord } from '../modules/applet-records';
+import { ToolDefinition } from '../modules/tools';
 
 export class Database extends Dexie {
   interactions!: Table<Interaction, number>;
   processes!: Table<Process, number>;
-  appletRecords!: Table<AppletRecord, string>;
+  tools!: Table<ToolDefinition, string>;
 
   constructor() {
     super('@unternet/kernel:db');

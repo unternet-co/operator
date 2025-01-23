@@ -15,7 +15,7 @@
   "dependencies": {
     "@compactjs/chatscroll": "^1.0.1",
     "@unternet/kernel": "*",
-    "@web-applets/sdk": "file:../../web-applets/sdk",
+    "@web-applets/sdk": "latest",
     "lit": "^3.2.1",
     "lit-markdown": "^1.3.2"
   }

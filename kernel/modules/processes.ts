@@ -1,5 +1,6 @@
 import { liveQuery, Table } from 'dexie';
 import db from '../lib/db';
+import { ActionChoice } from '../lib/types';
 import { AppletDataEvent, applets } from '@web-applets/sdk';
 
 /* Models */
@@ -24,33 +25,27 @@ export interface ActionDeclaration {
   params: any;
 }
 
-export interface ActionChoice {
-  appletUrl: string;
-  actionId: string;
-  params: any;
-}
-
 /* Actions */
 
 async function createAppletProcess(actionChoice: ActionChoice) {
   const id = await db.processes.add({
     type: 'applet',
-    url: actionChoice.appletUrl,
+    url: actionChoice.url,
   });
-  dispatchAction(id, actionChoice.actionId, actionChoice.params);
+  dispatchAction(id, actionChoice.actionId, actionChoice.arguments);
   return id;
 }
 
 async function runAppletWithAction(actionChoice?: ActionChoice) {
   console.log('[Operator] Loading applet.');
-  const applet = await applets.load(actionChoice.appletUrl);
+  const applet = await applets.load(actionChoice.url);
   console.log('[Operator] Applet loaded.');
   console.log(
     '[Operator] Dispatching action:',
     actionChoice.actionId,
-    actionChoice.params
+    actionChoice.arguments
   );
-  await applet.dispatchAction(actionChoice.actionId, actionChoice.params);
+  await applet.dispatchAction(actionChoice.actionId, actionChoice.arguments);
   return applet.data;
 }
 

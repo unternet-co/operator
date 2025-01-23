@@ -1,4 +1,4 @@
-export { appletRecords, type AppletRecord } from './modules/applet-records';
+export { tools, type ToolDefinition } from './modules/tools';
 export { interactions } from './modules/interactions';
 export type {
   Interaction,

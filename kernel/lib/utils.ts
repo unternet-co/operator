@@ -1,4 +1,4 @@
-import { AppletRecord } from '../modules/applet-records';
+import { ToolDefinition } from '../modules/tools';
 import { Interaction } from '../modules/interactions';
 import { Process, processes } from '../modules/processes';
 import { IndexedAction } from './types';
@@ -46,22 +46,46 @@ export function createObjectSchema(properties: object) {
   };
 }
 
-export function indexAppletActions(records: AppletRecord[]): IndexedAction[] {
-  let index = 0;
-  const indexedActions: IndexedAction[] = [];
-  for (const record of records) {
-    for (const action of record.manifest.actions) {
-      indexedActions.push({
-        key: `TOOL-${index}`,
-        appletUrl: record.url,
-        action,
+export function encodeActionId(url: string, actionId: string) {
+  return `${url}#${actionId}`;
+}
+export function decodeActionId(encodedActionId: string) {
+  // Returns [url, actionId]
+  return encodedActionId.split('#');
+}
+
+export function createActionSchemas(tools: ToolDefinition[]) {
+  let schemas = [];
+
+  for (const tool of tools) {
+    for (const action of tool.actions) {
+      schemas.push({
+        id: encodeActionId(tool.url, action.id),
+        description: action.description,
+        parameters: action.parameters,
       });
-      index += 1;
     }
   }
 
-  return indexedActions;
+  return schemas;
 }
+
+// export function indexAppletActions(records: ToolDefinition[]): IndexedAction[] {
+//   let index = 0;
+//   const indexedActions: IndexedAction[] = [];
+//   for (const record of records) {
+//     for (const action of record.manifest.actions) {
+//       indexedActions.push({
+//         key: `TOOL-${index}`,
+//         appletUrl: record.url,
+//         action,
+//       });
+//       index += 1;
+//     }
+//   }
+
+//   return indexedActions;
+// }
 
 export function normalizeUrl(url, defaultProtocol: 'http' | 'https' = 'https') {
   try {

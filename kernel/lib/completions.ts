@@ -114,6 +114,15 @@ async function chooseActions(
 
     if (action.parameters) {
       schema.properties.arguments = action.parameters;
+
+      // Set some variables that OpenAI requires if they're not present
+      if (!schema.properties.arguments.required) {
+        schema.properties.arguments.required = Object.keys(
+          schema.properties.arguments.properties
+        );
+      }
+      schema.properties.arguments.additionalProperties = false;
+
       schema.required.push('arguments');
     }
 

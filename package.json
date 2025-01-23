@@ -15,7 +15,6 @@
     "concurrently": "^9.1.0"
   },
   "dependencies": {
-    "@web-applets/sdk": "file:../web-applets/sdk",
     "ai": "^4.0.18"
   }
 }

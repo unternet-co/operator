@@ -108,7 +108,7 @@ async function chooseActions(
           enum: [action.id],
         },
       },
-      addtionalProperties: false,
+      additionalProperties: false,
       required: ['id'],
     };
 
@@ -120,25 +120,42 @@ async function chooseActions(
     return schema;
   };
 
+  // const schema = createObjectSchema({
+  //   choices: {
+  //     type: 'array',
+  //     description: `An array of the chosen tools, and filled out parameters. Array must have a length of ${num} or less.`,
+  //     items: {
+  //       type: 'object',
+  //       required: ['id', 'params'],
+  //       additionalProperties: false,
+  //       properties: {
+  //         id: {
+  //           type: 'string',
+  //           description: `Must be one of the above tool ids`,
+  //         },
+  //         params: {
+  //           anyOf: actions.map((a) => a.parameters),
+  //           discriminator: { propertyName: 'id' },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+  // console.log(schema);
+
   const responseSchema = {
-    type: 'json_schema',
-    json_schema: {
-      name: 'action_Choice',
-      schema: {
-        type: 'object',
-        properties: {
-          functions: {
-            type: 'array',
-            items: {
-              oneOf: actions.map(actionChoiceSchema),
-            },
-          },
+    type: 'object',
+    properties: {
+      tools: {
+        type: 'array',
+        items: {
+          anyOf: actions.map(actionChoiceSchema),
         },
-        required: ['functions'],
         additionalProperties: false,
       },
-      strict: true,
     },
+    required: ['tools'],
+    additionalProperties: false,
   };
 
   const messages = await interactionsToMessages(history);
@@ -155,7 +172,9 @@ async function chooseActions(
     schema: responseSchema,
   });
 
-  return json.choices.map((choice) => {
+  console.log(json);
+
+  return json.tools.map((choice) => {
     const [url, actionId] = decodeActionId(choice.id);
     return {
       url,

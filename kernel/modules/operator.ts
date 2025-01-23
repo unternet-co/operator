@@ -78,8 +78,8 @@ async function handleInput(input: InteractionInput) {
     console.log(`[OPERATOR]  Chosen action: ${logMessage}`);
 
     const processId = await processes.createWebProcess(actionChoice.url);
-    await processes.dispatchAction(processId, actionChoice);
     interactions.createWebOutput(interactionId, processId);
+    await processes.dispatchAction(processId, actionChoice);
   }
 }
 

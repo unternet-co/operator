@@ -100,7 +100,7 @@ export class ThreadView extends LitElement {
           ${interaction.outputs.map((output) =>
             output.type === 'text'
               ? this.textOutputTemplate(output)
-              : output.type === 'applet'
+              : output.type === 'web'
               ? this.appletOutputTemplate(output)
               : this.dataOutputTemplate(output)
           )}

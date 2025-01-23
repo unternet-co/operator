@@ -24,7 +24,7 @@ export interface TextOutput {
 }
 
 export interface AppletOutput {
-  type: 'applet';
+  type: 'web';
   processId: number;
 }
 

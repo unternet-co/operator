@@ -25,7 +25,7 @@ export async function interactionsToMessages(interactions: Interaction[]) {
           role: 'assistant',
           content: output.content,
         });
-      } else if (output.type === 'applet') {
+      } else if (output.type === 'web') {
         const process: Process = await processes.get(output.processId);
         messages.push({
           role: 'system',

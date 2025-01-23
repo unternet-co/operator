@@ -24,7 +24,7 @@ export interface WebProcess extends BaseProcess {
 /* Actions */
 
 async function runAction(actionChoice: ActionChoice) {
-  console.log('[Operator] Loading applet.');
+  console.log('[Operator] Loading applet, for one-off run.');
   const applet = await applets.load(actionChoice.url);
   console.log('[Operator] Applet loaded.');
   console.log(
@@ -51,6 +51,10 @@ async function dispatchAction(processId: number, actionChoice: ActionChoice) {
   const instance = await processes.get(processId);
   if (!instance) {
     throw new Error(`Process with ID ${processId} doesn't exist!`);
+  }
+  if (!actionChoice.actionId) {
+    console.warn('No action ID supplied, aborting action dispatch.');
+    return;
   }
 
   console.log('[Operator] Loading applet.');

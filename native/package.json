@@ -1,6 +1,6 @@
 {
   "name": "operator-electron",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Unternet Operator.",
   "main": "main.js",
   "productName": "Operator",
@@ -12,8 +12,8 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@todesktop/runtime": "^1.6.4",
-    "electron-is-dev": "^3.0.1"
+    "electron-is-dev": "^3.0.1",
+    "@todesktop/runtime": "^1.6.4"
   },
   "devDependencies": {
     "@todesktop/cli": "^1.9.4",

@@ -1,6 +1,6 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { appletRecords, AppletRecord } from '@unternet/kernel';
+import { tools, ToolDefinition } from '@unternet/kernel';
 import './applet-picker.css';
 
 @customElement('applet-picker')
@@ -9,13 +9,13 @@ export class AppletPicker extends LitElement {
   clickListener: EventListener;
 
   @property({ attribute: false })
-  appletRecords: AppletRecord[] = [];
+  tools: ToolDefinition[] = [];
 
   connectedCallback(): void {
     super.connectedCallback();
-    appletRecords.subscribe(
-      appletRecords.all,
-      (records: AppletRecord[]) => (this.appletRecords = records)
+    tools.subscribe(
+      tools.all,
+      (tools: ToolDefinition[]) => (this.tools = tools)
     );
   }
 
@@ -24,11 +24,11 @@ export class AppletPicker extends LitElement {
     const form = e.target as HTMLFormElement;
     const data = new FormData(form);
     const url = data.get('url') as string;
-    appletRecords.register(url);
+    tools.register(url);
   }
 
   handleDelete(url: string) {
-    appletRecords.delete(url);
+    tools.delete(url);
   }
 
   render() {
@@ -36,25 +36,25 @@ export class AppletPicker extends LitElement {
         <input name="url" type="text" placeholder="Add applet from URL..." />
       </form>
       <ul class="picker-applet-list">
-        ${this.appletRecords.map(
-          (record) => html`<li>
+        ${this.tools.map(
+          (tool) => html`<li>
             <div class="header">
               <div class="title">
                 <img
                   class="picker-applet-icon"
-                  src=${record.manifest.icons[0].src}
+                  src=${tool.icons && tool.icons[0].src}
                 />
-                <h2>${record.manifest.name}</h2>
+                <h2>${tool.name}</h2>
               </div>
               <button
                 class="icon-button"
-                @click=${() => this.handleDelete(record.url)}
+                @click=${() => this.handleDelete(tool.url)}
               >
                 <img src="/icons/close.svg" />
               </button>
             </div>
-            <p class="url">${record.url}</p>
-            <p class="description">${record.manifest.description}</p>
+            <p class="url">${tool.url}</p>
+            <p class="description">${tool.description}</p>
           </li>`
         )}
       </ul>`;

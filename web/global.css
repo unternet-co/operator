@@ -26,7 +26,7 @@
   --color-input: var(--color-neutral-7);
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --color-neutral-1: #fff;
     --color-neutral-2: #f8f8f8;
@@ -44,7 +44,7 @@
     --color-input: var(--color-neutral-9);
     --color-text-faded: var(--color-neutral-5);
   }
-}
+} */
 
 * {
   box-sizing: border-box;
@@ -118,4 +118,8 @@ body {
 }
 .icon-button img {
   pointer-events: none;
+}
+
+applet-frame {
+  height: 330px;
 }

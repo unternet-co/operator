@@ -54,15 +54,11 @@ async function chooseStrategy(
     With the above available tools in mind, choose from one of the following strategies to use while handling the user's query:
     ${JSON.stringify(strategies)}\
   `;
-
-  const possibleValues = Object.keys(strategies)
-    .map((s) => `'${s}'`)
-    .join(', ');
-
+  
   const schema = createObjectSchema({
     strategy: {
       type: 'string',
-      description: `Must be one of the following values: ${possibleValues}`,
+      enum: Object.keys(strategies)
     },
   });
 

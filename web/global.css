@@ -119,3 +119,7 @@ body {
 .icon-button img {
   pointer-events: none;
 }
+
+applet-frame {
+  height: 330px;
+}

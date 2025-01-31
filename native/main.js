@@ -51,8 +51,6 @@ function createWindow() {
   }
 }
 
-console.log(fetch);
-
 ipcMain.handle('fetch', async (event, url) => {
   try {
     const response = await fetch(url);

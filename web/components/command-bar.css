@@ -1,15 +1,16 @@
 command-bar {
   width: 100%;
-  padding: 12px 0 6px 0;
+  padding: 8px 0;
   /* box-shadow: 0 -12px 16px var(--color-page-alt); */
   background: var(--color-page);
   border-top: 1px solid var(--color-border);
 }
 
 command-bar .input-container {
-  /* border-radius: 4px; */
+  border-radius: 4px;
+  padding: 4px;
   /* border: 1px solid var(--color-border); */
-  background: var(--color-page);
+  background: var(--color-neutral-7);
 }
 
 command-bar input {

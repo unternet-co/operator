@@ -3,7 +3,7 @@
   "type": "module",
   "dependencies": {
     "@ai-sdk/openai": "^1.0.10",
-    "@unternet/sdk": "^0.0.6",
+    "@unternet/sdk": "file:../../unternet-api/sdk",
     "@web-applets/sdk": "latest",
     "ai": "^4.0.20",
     "dexie": "^4.0.10",

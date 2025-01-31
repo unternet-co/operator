@@ -80,13 +80,14 @@ async function chooseStrategy(
 async function chooseActions(
   history: Interaction[],
   actions: ResourceAction[],
-  num?: number
+  num?: number,
+  hint?: string
 ): Promise<ActionChoice[]> {
   num = num || 1;
   const prompt = `\
     In this environment you have access to a set of tools. Here are the functions available in JSONSchema format:
     ${actions}
-    Choose one or more functions to call to respond to the user's query.
+    Choose one or more functions to call to respond to the user's query. ${hint}
   `;
 
   const actionChoiceSchema = (action: ResourceAction) => {
@@ -135,7 +136,6 @@ async function chooseActions(
   };
 
   const messages = await interactionsToMessages(history);
-  console.log(responseSchema);
 
   const { json } = await generateJson({
     messages: [
@@ -151,8 +151,9 @@ async function chooseActions(
   console.log(json);
 
   return json.tools.map((choice) => {
-    const [url, actionId] = decodeActionId(choice.id);
+    const { protocol, url, actionId } = decodeActionId(choice.id);
     return {
+      protocol,
       url,
       actionId,
       arguments: choice.arguments,
@@ -162,9 +163,10 @@ async function chooseActions(
 
 async function chooseAction(
   history: Interaction[],
-  actions: ResourceAction[]
+  actions: ResourceAction[],
+  hint?: string
 ): Promise<ActionChoice> {
-  const choices = await chooseActions(history, actions, 1);
+  const choices = await chooseActions(history, actions, 1, hint);
   return choices[0];
 }
 

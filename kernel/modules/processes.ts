@@ -2,6 +2,7 @@ import { liveQuery } from 'dexie';
 import db from '../lib/db';
 import { ActionChoice } from '../lib/types';
 import { AppletDataEvent, applets } from '@web-applets/sdk';
+import { unternet } from '../lib/unternet';
 
 /* Models */
 
@@ -23,16 +24,26 @@ export interface WebProcess extends BaseProcess {
 /* Actions */
 
 async function runAction(actionChoice: ActionChoice) {
-  console.log('[Operator] Loading applet, for one-off run.');
-  const applet = await applets.load(actionChoice.url);
-  console.log('[Operator] Applet loaded.');
-  console.log(
-    '[Operator] Dispatching action:',
-    actionChoice.actionId,
-    actionChoice.arguments
-  );
-  await applet.dispatchAction(actionChoice.actionId, actionChoice.arguments);
-  return applet.data;
+  if (actionChoice.protocol === 'search') {
+    const { webpages } = await unternet.lookup.query({
+      q: actionChoice.arguments.query,
+      webpages: {
+        sites: [actionChoice.url],
+      },
+    });
+    return webpages;
+  } else {
+    console.log('[Operator] Loading applet, for one-off run.');
+    const applet = await applets.load(actionChoice.url);
+    console.log('[Operator] Applet loaded.');
+    console.log(
+      '[Operator] Dispatching action:',
+      actionChoice.actionId,
+      actionChoice.arguments
+    );
+    await applet.dispatchAction(actionChoice.actionId, actionChoice.arguments);
+    return applet.data;
+  }
 }
 
 async function createWebProcess(url: string, actionChoice?: ActionChoice) {

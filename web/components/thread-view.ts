@@ -11,7 +11,7 @@ import { resolveMarkdown } from 'lit-markdown';
 import './thread-view.css';
 import { resources } from '@unternet/kernel';
 import './applet-view';
-import { AppletOutput } from '@unternet/kernel/modules/interactions';
+import { WebOutput } from '@unternet/kernel/modules/interactions';
 import { observe } from '@compactjs/chatscroll';
 import { repeat } from 'lit/directives/repeat.js';
 
@@ -71,7 +71,7 @@ export class ThreadView extends LitElement {
 
   dataOutputTemplate(output: DataOutput) {
     const resource = this.resources.find(
-      (tool) => tool.url === output.appletUrl
+      (resource) => resource.url === output.resourceUrl
     );
     return html`<div class="data-output">
       <img class="applet-icon" src=${resource.icons[0].src} />
@@ -82,7 +82,7 @@ export class ThreadView extends LitElement {
     </div>`;
   }
 
-  appletOutputTemplate(output: AppletOutput) {
+  appletOutputTemplate(output: WebOutput) {
     return html`<div class="applet-output">
       <applet-view processId=${output.processId}></applet-view>
     </div>`;

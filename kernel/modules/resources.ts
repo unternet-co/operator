@@ -1,5 +1,5 @@
 import { ManifestIcon } from '@web-applets/sdk';
-import { getMetadata, normalizeUrl } from '../lib/utils';
+import { encodeActionURI, getMetadata, normalizeUrl } from '../lib/utils';
 import db from '../lib/db';
 import { liveQuery } from 'dexie';
 import { JSONSchema } from '../lib/types';
@@ -44,35 +44,35 @@ async function allActions() {
 
   let actions = [];
 
-  // const searchAction = {
-  //   id: 'search',
-  //   description: 'Search the web & specific domains.',
-  //   parameters: {
-  //     id: `search`,
-  //     description: `Conduct a web search on this website's pages.\nWebsite description: ${metadata.description}.`,
-  //     parameters: {
-  //       type: 'object',
-  //       properties: {
-  //         query: {
-  //           type: 'string',
-  //           description: 'The search query.',
-  //         },
-  //       },
-  //       required: ['query'],
-  //     },
-  //   },
-  // };
-
   for (const resource of allResources) {
-    // if (resource.search)
-    for (const action of resource.actions) {
+    // if (!resource.actions || resource.search) {
+    if (!resource.actions) {
       actions.push({
-        id: `${resource.url}#${action.id}`,
-        description: `${resource.description}\n\n${action.description}`,
-        parameters: action.parameters,
+        id: encodeActionURI({ protocol: 'search', url: resource.url }),
+        description: `Conduct a web search on this website's pages.\nWebsite title:${resource.name}\nWebsite description: ${resource.description}`,
+        parameters: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'The search query.',
+            },
+          },
+          required: ['query'],
+        },
       });
+    } else {
+      for (const action of resource.actions) {
+        actions.push({
+          id: encodeActionURI({ url: resource.url, actionId: action.id }),
+          description: `${resource.description}\n\n${action.description}`,
+          parameters: action.parameters,
+        });
+      }
     }
   }
+
+  console.log(actions);
 
   return actions;
 }

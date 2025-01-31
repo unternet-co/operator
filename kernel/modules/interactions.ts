@@ -10,11 +10,11 @@ interface CommandInput {
   text: string;
 }
 
-export type InteractionOutput = TextOutput | DataOutput | AppletOutput;
+export type InteractionOutput = TextOutput | DataOutput | WebOutput;
 
 export interface DataOutput {
   type: 'data';
-  appletUrl: string;
+  resourceUrl: string;
   content: object;
 }
 
@@ -23,7 +23,7 @@ export interface TextOutput {
   content: string;
 }
 
-export interface AppletOutput {
+export interface WebOutput {
   type: 'web';
   processId: number;
 }

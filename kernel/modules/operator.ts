@@ -38,15 +38,13 @@ async function handleInput(input: InteractionInput) {
   } else if (strategy === 'SEARCH') {
     const actionChoices = await completions.chooseActions(history, actions, 3);
 
-    const logMessage = actionChoices
-      .map((c) => `${c.url}#${c.actionId}`)
-      .join(', ');
-    console.log(`[OPERATOR] Chosen actions: ${logMessage}`);
+    console.log(`[OPERATOR] Chosen actions:`, actionChoices);
 
+    // TODO: Eliminate 'data' type, just have it a hidden thing, not running process?
     for await (const actionChoice of actionChoices) {
       const data = await processes.runAction(actionChoice);
       await interactions.createDataOutput(interactionId, {
-        appletUrl: actionChoice.url,
+        resourceUrl: actionChoice.url,
         content: data,
       });
     }
@@ -66,8 +64,14 @@ async function handleInput(input: InteractionInput) {
     );
   } else if (strategy === 'DISPLAY') {
     // TODO: Make it only choose visible ones
-    const actionChoice = await completions.chooseAction(history, actions);
-    const logMessage = `${actionChoice.url}#${actionChoice.actionId}`;
+    const actionChoice = await completions.chooseAction(
+      history,
+      actions,
+      'Do not choose `search:` prefixed actions.'
+    );
+    const logMessage = `${actionChoice.url}${
+      actionChoice.actionId ? `#${actionChoice.actionId}` : ''
+    }`;
     console.log(`[OPERATOR]  Chosen action: ${logMessage}`);
 
     const processId = await processes.createWebProcess(actionChoice.url);

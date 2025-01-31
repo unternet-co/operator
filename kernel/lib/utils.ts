@@ -45,12 +45,27 @@ export function createObjectSchema(properties: object) {
   };
 }
 
-export function encodeActionId(url: string, actionId: string) {
-  return `${url}#${actionId}`;
+interface URIComponents {
+  protocol?: string;
+  url: string;
+  actionId?: string;
 }
-export function decodeActionId(encodedActionId: string) {
-  // Returns [url, actionId]
-  return encodedActionId.split('#');
+
+export function encodeActionURI({ protocol, url, actionId }: URIComponents) {
+  return `${protocol ? protocol + ':' : ''}${url}${
+    actionId ? '#' + actionId : ''
+  }`;
+}
+export function decodeActionId(encodedActionURI: string): URIComponents {
+  const [protocol, ...rest] = encodedActionURI.split(':');
+  const [url, actionId] = rest.join(':').split('#');
+
+  console.log(protocol, url);
+  return {
+    protocol,
+    url: url.startsWith('//') ? `${protocol}:${url}` : url,
+    actionId: actionId || '',
+  };
 }
 
 function hasAllKeys(obj, keys) {

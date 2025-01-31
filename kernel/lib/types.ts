@@ -25,6 +25,7 @@ export interface JSONSchema {
 
 export interface ActionChoice {
   url: string;
+  protocol: string;
   actionId: string;
-  arguments: unknown;
+  arguments: any;
 }

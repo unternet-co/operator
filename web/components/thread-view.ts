@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
-  ToolDefinition,
+  Resource,
   DataOutput,
   Interaction,
   interactions,
@@ -9,7 +9,7 @@ import {
 } from '@unternet/kernel';
 import { resolveMarkdown } from 'lit-markdown';
 import './thread-view.css';
-import { tools } from '@unternet/kernel';
+import { resources } from '@unternet/kernel';
 import './applet-view';
 import { AppletOutput } from '@unternet/kernel/modules/interactions';
 import { observe } from '@compactjs/chatscroll';
@@ -21,14 +21,17 @@ export class ThreadView extends LitElement {
 
   isFollowing: boolean = true;
   prevInteractionsLength: number = 0;
-  tools: ToolDefinition[] = [];
+  resources: Resource[] = [];
 
   @property({ attribute: false })
   interactions: Interaction[] = [];
 
   connectedCallback() {
     super.connectedCallback();
-    tools.subscribe(tools.all, this.updateTools.bind(this));
+    resources.subscribe(
+      resources.all,
+      (resources) => (this.resources = resources)
+    );
     interactions.subscribe(this.updateInteractions.bind(this));
     observe(this);
 
@@ -40,10 +43,6 @@ export class ThreadView extends LitElement {
     //   }
     //   previousScrollY = this.scrollTop;
     // });
-  }
-
-  updateTools(newTools: ToolDefinition[]) {
-    this.tools = newTools;
   }
 
   updateInteractions(newInteractions: Interaction[]) {
@@ -71,12 +70,14 @@ export class ThreadView extends LitElement {
   }
 
   dataOutputTemplate(output: DataOutput) {
-    const tool = this.tools.find((tool) => tool.url === output.appletUrl);
+    const resource = this.resources.find(
+      (tool) => tool.url === output.appletUrl
+    );
     return html`<div class="data-output">
-      <img class="applet-icon" src=${tool.icons[0].src} />
+      <img class="applet-icon" src=${resource.icons[0].src} />
       <div class="description">
         Searched using
-        <span class="applet-name">${tool.short_name || tool.name}</span>
+        <span class="applet-name">${resource.short_name || resource.name}</span>
       </div>
     </div>`;
   }

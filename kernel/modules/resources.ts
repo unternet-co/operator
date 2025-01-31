@@ -4,19 +4,19 @@ import db from '../lib/db';
 import { liveQuery } from 'dexie';
 import { JSONSchema } from '../lib/types';
 
-export type ToolType = 'web-applet' | 'web-resource';
+export type ResourceType = 'web';
 
-export interface ToolDefinition {
-  type: ToolType;
+export interface Resource {
+  type: ResourceType;
   url: string;
   name?: string;
   short_name?: string;
   icons?: ManifestIcon[];
   description?: string;
-  actions?: ActionDefinition[];
+  actions?: ResourceAction[];
 }
 
-export interface ActionDefinition {
+export interface ResourceAction {
   id: string;
   description?: string;
   parameters?: JSONSchema;
@@ -30,31 +30,24 @@ async function register(url: string) {
   }
 
   const metadata = await getMetadata(url);
-
-  // TODO: Later, might want to have indexing work for web applets too!
-  // Maybe just one "web" process, which optionally has actions?
-  // Maybe put the protocol on the actions themselves, like "system" or "search" or "web-applets"
-  const tool: ToolDefinition = {
-    type: 'web-resource',
+  const resource: Resource = {
+    type: 'web',
     url,
     name: metadata.name,
     short_name: metadata.short_name,
     icons: metadata.icons,
     description: metadata.description,
+    actions: metadata.actions,
   };
 
-  if (metadata.actions) {
-    tool.type = 'web-applet';
-    tool.actions = metadata.actions;
-  }
-
-  db.tools.put(tool);
+  db.resources.put(resource);
 }
 
-async function getActions() {
-  const allTools = await tools.all();
+async function allActions() {
+  const allResources = await resources.all();
 
   let actions = [];
+
   // const searchAction = {
   //   id: 'search',
   //   description: 'Search the web & specific domains.',
@@ -74,15 +67,12 @@ async function getActions() {
   //   },
   // };
 
-  for (const tool of allTools) {
-    if (tool.type === 'web-resource') {
-      continue;
-    }
-
-    for (const action of tool.actions) {
+  for (const resource of allResources) {
+    // if (resource.search)
+    for (const action of resource.actions) {
       actions.push({
-        id: `${tool.url}#${action.id}`,
-        description: `${tool.description}\n\n${action.description}`,
+        id: `${resource.url}#${action.id}`,
+        description: `${resource.description}\n\n${action.description}`,
         parameters: action.parameters,
       });
     }
@@ -92,21 +82,25 @@ async function getActions() {
 }
 
 function all() {
-  return db.tools.toArray();
+  return db.resources.toArray();
 }
 
 function subscribe(
-  query: () => Promise<ToolDefinition[]>,
-  callback: (processes: ToolDefinition[]) => void
+  query: () => Promise<Resource[]>,
+  callback: (resources: Resource[]) => void
 ) {
   return liveQuery(query).subscribe(callback);
 }
 
-export const tools = {
+const actions = {
+  all: allActions,
+};
+
+export const resources = {
   register,
   all,
-  getActions,
-  get: db.tools.get.bind(db.tools),
-  delete: db.tools.delete.bind(db.tools),
+  get: db.resources.get.bind(db.resources),
+  delete: db.resources.delete.bind(db.resources),
   subscribe,
+  actions,
 };

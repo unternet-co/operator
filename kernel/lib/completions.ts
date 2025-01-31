@@ -7,7 +7,7 @@ import {
 } from './utils';
 import { Interaction } from '../modules/interactions';
 import { ActionChoice } from '../lib/types';
-import { ActionDefinition, ToolDefinition } from '../modules/tools';
+import { ResourceAction, Resource } from '../modules/resources';
 import { streamText } from 'ai';
 import { openai } from './model';
 
@@ -43,10 +43,8 @@ async function streamResponse(
 async function chooseStrategy(
   history: Interaction[],
   strategies: { [key: string]: string },
-  tools: ToolDefinition[]
+  actions: ResourceAction[]
 ) {
-  const actions = createActionSchemas(tools);
-
   const prompt = `\
     In this environment you have access to a set of tools you can use to answer the user's question.
     Here are the functions available in JSONSchema format:
@@ -54,11 +52,11 @@ async function chooseStrategy(
     With the above available tools in mind, choose from one of the following strategies to use while handling the user's query:
     ${JSON.stringify(strategies)}\
   `;
-  
+
   const schema = createObjectSchema({
     strategy: {
       type: 'string',
-      enum: Object.keys(strategies)
+      enum: Object.keys(strategies),
     },
   });
 
@@ -82,20 +80,17 @@ async function chooseStrategy(
 
 async function chooseActions(
   history: Interaction[],
-  tools: ToolDefinition[],
+  actions: ResourceAction[],
   num?: number
 ): Promise<ActionChoice[]> {
   num = num || 1;
-  // Turns all actions into flat list, with id -> `${url}#${actionId}`
-  const actions = createActionSchemas(tools);
-
   const prompt = `\
     In this environment you have access to a set of tools. Here are the functions available in JSONSchema format:
     ${actions}
     Choose one or more functions to call to respond to the user's query.
   `;
 
-  const actionChoiceSchema = (action: ActionDefinition) => {
+  const actionChoiceSchema = (action: ResourceAction) => {
     const schema: any = {
       type: 'object',
       properties: {
@@ -191,9 +186,9 @@ async function chooseActions(
 
 async function chooseAction(
   history: Interaction[],
-  tools: ToolDefinition[]
+  actions: ResourceAction[]
 ): Promise<ActionChoice> {
-  const choices = await chooseActions(history, tools, 1);
+  const choices = await chooseActions(history, actions, 1);
   return choices[0];
 }
 

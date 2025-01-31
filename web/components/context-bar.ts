@@ -1,6 +1,6 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { tools, type ToolDefinition } from '@unternet/kernel';
+import { resources, type Resource } from '@unternet/kernel';
 import './applet-picker';
 import './context-bar.css';
 
@@ -9,14 +9,17 @@ export class ContextBar extends LitElement {
   renderRoot = this;
 
   @property({ attribute: false })
-  tools: ToolDefinition[] = [];
+  resources: Resource[] = [];
 
   @property({ attribute: false })
   isAppletPickerOpen: boolean = false;
 
   connectedCallback(): void {
     super.connectedCallback();
-    tools.subscribe(tools.all, (tools) => (this.tools = tools));
+    resources.subscribe(
+      resources.all,
+      (resources) => (this.resources = resources)
+    );
 
     window.addEventListener('mousedown', (event) => {
       const target = event.target as Node;
@@ -36,7 +39,7 @@ export class ContextBar extends LitElement {
 
   appletTemplate() {
     return html`
-      ${this.tools.map((tool) => {
+      ${this.resources.map((tool) => {
         return html`<li class="applet-item">
           <img class="applet-icon" src=${tool.icons && tool.icons[0].src} />
           <span class="applet-name">${tool.short_name ?? tool.name}</span>

@@ -1,8 +1,7 @@
-import { ToolDefinition } from '../modules/tools';
 import { Interaction } from '../modules/interactions';
 import { Process, processes } from '../modules/processes';
-import { IndexedAction } from './types';
 import { loadManifest } from '@web-applets/sdk';
+import { Resource } from '../modules/resources';
 
 export async function interactionsToMessages(interactions: Interaction[]) {
   let messages = [];
@@ -55,7 +54,7 @@ export function decodeActionId(encodedActionId: string) {
   return encodedActionId.split('#');
 }
 
-export function createActionSchemas(tools: ToolDefinition[]) {
+export function createActionSchemas(tools: Resource[]) {
   let schemas = [];
 
   for (const tool of tools) {

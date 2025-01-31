@@ -2,7 +2,6 @@ import { liveQuery } from 'dexie';
 import db from '../lib/db';
 import { ActionChoice } from '../lib/types';
 import { AppletDataEvent, applets } from '@web-applets/sdk';
-import { ToolDefinition, tools } from './tools';
 
 /* Models */
 

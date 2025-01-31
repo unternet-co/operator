@@ -1,5 +1,5 @@
 import { InteractionInput, interactions } from './interactions';
-import { tools } from './tools';
+import { resources } from './resources';
 import { completions } from '../lib/completions';
 import { processes } from './processes';
 
@@ -10,7 +10,7 @@ export const strategies = {
 };
 
 async function init(appletUrls: string[]) {
-  appletUrls.map((url) => tools.register(url));
+  appletUrls.map((url) => resources.register(url));
 }
 
 async function handleInput(input: InteractionInput) {
@@ -21,12 +21,12 @@ async function handleInput(input: InteractionInput) {
 
   const interactionId = await interactions.fromInput(input);
   const history = (await interactions.all()).slice(-10);
-  const availableTools = await tools.all();
+  const actions = await resources.actions.all();
 
   const { strategy } = await completions.chooseStrategy(
     history,
     strategies,
-    availableTools
+    actions
   );
   console.log(`[OPERATOR] Chosen strategy: '${strategy}'`);
 
@@ -36,11 +36,7 @@ async function handleInput(input: InteractionInput) {
       interactions.updateTextOutput(interactionId, outputIndex, text);
     });
   } else if (strategy === 'SEARCH') {
-    const actionChoices = await completions.chooseActions(
-      history,
-      availableTools,
-      3
-    );
+    const actionChoices = await completions.chooseActions(history, actions, 3);
 
     const logMessage = actionChoices
       .map((c) => `${c.url}#${c.actionId}`)
@@ -70,10 +66,7 @@ async function handleInput(input: InteractionInput) {
     );
   } else if (strategy === 'DISPLAY') {
     // TODO: Make it only choose visible ones
-    const actionChoice = await completions.chooseAction(
-      history,
-      availableTools
-    );
+    const actionChoice = await completions.chooseAction(history, actions);
     const logMessage = `${actionChoice.url}#${actionChoice.actionId}`;
     console.log(`[OPERATOR]  Chosen action: ${logMessage}`);
 
@@ -87,15 +80,3 @@ export const operator = {
   init,
   handleInput,
 };
-
-/**
- * tool:
- * createProcess (optional -> describes how a process works)
- * dispatchAction (optional -> describes how to dispatch actions to a process)
- * runAction (optional -> describes how to make a call & do something or get a response)
- *
- * The only processes you can dispatch an action to right now are applets, maybe servlets later.
- *
- * Can an applet be a source too?
- * Ah default actions! By default can open a page, or query it (so long as a web page). Can override the query action if you want.
- */

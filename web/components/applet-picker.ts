@@ -1,6 +1,6 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { tools, ToolDefinition } from '@unternet/kernel';
+import { resources, type Resource } from '@unternet/kernel';
 import './applet-picker.css';
 
 @customElement('applet-picker')
@@ -9,13 +9,13 @@ export class AppletPicker extends LitElement {
   clickListener: EventListener;
 
   @property({ attribute: false })
-  tools: ToolDefinition[] = [];
+  resources: Resource[] = [];
 
   connectedCallback(): void {
     super.connectedCallback();
-    tools.subscribe(
-      tools.all,
-      (tools: ToolDefinition[]) => (this.tools = tools)
+    resources.subscribe(
+      resources.all,
+      (resources: Resource[]) => (this.resources = resources)
     );
   }
 
@@ -24,11 +24,11 @@ export class AppletPicker extends LitElement {
     const form = e.target as HTMLFormElement;
     const data = new FormData(form);
     const url = data.get('url') as string;
-    tools.register(url);
+    resources.register(url);
   }
 
   handleDelete(url: string) {
-    tools.delete(url);
+    resources.delete(url);
   }
 
   render() {
@@ -36,25 +36,25 @@ export class AppletPicker extends LitElement {
         <input name="url" type="text" placeholder="Add applet from URL..." />
       </form>
       <ul class="picker-applet-list">
-        ${this.tools.map(
-          (tool) => html`<li>
+        ${this.resources.map(
+          (resource) => html`<li>
             <div class="header">
               <div class="title">
                 <img
                   class="picker-applet-icon"
-                  src=${tool.icons && tool.icons[0].src}
+                  src=${resource.icons && resource.icons[0].src}
                 />
-                <h2>${tool.name}</h2>
+                <h2>${resource.name}</h2>
               </div>
               <button
                 class="icon-button"
-                @click=${() => this.handleDelete(tool.url)}
+                @click=${() => this.handleDelete(resource.url)}
               >
                 <img src="/icons/close.svg" />
               </button>
             </div>
-            <p class="url">${tool.url}</p>
-            <p class="description">${tool.description}</p>
+            <p class="url">${resource.url}</p>
+            <p class="description">${resource.description}</p>
           </li>`
         )}
       </ul>`;

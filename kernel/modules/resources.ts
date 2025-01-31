@@ -33,11 +33,7 @@ async function register(url: string) {
   const resource: Resource = {
     type: 'web',
     url,
-    name: metadata.name,
-    short_name: metadata.short_name,
-    icons: metadata.icons,
-    description: metadata.description,
-    actions: metadata.actions,
+    ...metadata,
   };
 
   db.resources.put(resource);

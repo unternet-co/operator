@@ -1,7 +1,6 @@
 import { Interaction } from '../modules/interactions';
 import { Process, processes } from '../modules/processes';
-import { loadManifest } from '@web-applets/sdk';
-import { Resource } from '../modules/resources';
+import { type Resource } from '../modules/resources';
 
 export async function interactionsToMessages(interactions: Interaction[]) {
   let messages = [];
@@ -54,26 +53,67 @@ export function decodeActionId(encodedActionId: string) {
   return encodedActionId.split('#');
 }
 
-export function createActionSchemas(tools: Resource[]) {
-  let schemas = [];
+function hasAllKeys(obj, keys) {
+  return keys.every((key) => key in obj);
+}
 
-  for (const tool of tools) {
-    for (const action of tool.actions) {
-      schemas.push({
-        id: encodeActionId(tool.url, action.id),
-        description: action.description,
-        parameters: action.parameters,
+export async function getMetadata(url: string): Promise<Partial<Resource>> {
+  let metadata = {} as Partial<Resource>;
+
+  url = new URL(url).href;
+  const html = await system.fetch(url);
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(html, 'text/html');
+  const manifestLink = dom.querySelector(
+    'link[rel="manifest"]'
+  ) as HTMLLinkElement;
+
+  if (manifestLink) {
+    const manifestUrl = new URL(manifestLink.getAttribute('href'), url).href;
+    const manifestText = await system.fetch(manifestUrl);
+    if (manifestText) {
+      const manifest = JSON.parse(manifestText);
+      metadata = manifest;
+      metadata.icons = manifest.icons.map((icon) => {
+        icon.src = new URL(icon.src, manifestUrl).href;
+        console.log(icon.src);
+        return icon;
       });
     }
   }
 
-  return schemas;
-}
+  if (!metadata.name) {
+    const metaAppName = dom.querySelector(
+      'meta[name="application-name"]'
+    ) as HTMLMetaElement;
+    if (metaAppName) {
+      metadata.name = metaAppName.content;
+    } else {
+      const title = dom.querySelector('title')?.innerText;
+      metadata.name = title.split(' - ')[0];
+    }
+  }
 
-export async function getMetadata(url: string) {
-  const manifest = await loadManifest(url);
-  // TODO: Fetch metadata from normal sites
-  if (manifest) return manifest;
+  if (!metadata.icons) {
+    const faviconLink = dom.querySelector(
+      'link[rel~="icon"]'
+    ) as HTMLLinkElement;
+    if (faviconLink)
+      metadata.icons = [
+        { src: new URL(faviconLink.getAttribute('href'), url).href },
+      ];
+  }
+
+  if (!metadata.description) {
+    metadata.description = dom
+      .querySelector('meta[name="description"]')
+      ?.getAttribute('content');
+  }
+
+  console.log(metadata);
+
+  return metadata;
+  // dom.querySelector('meta[name="description"]').getAttribute('content');
 }
 
 export function normalizeUrl(url, defaultProtocol: 'http' | 'https' = 'https') {

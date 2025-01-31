@@ -1,6 +1,5 @@
 import { generateJson } from './model';
 import {
-  createActionSchemas,
   createObjectSchema,
   decodeActionId,
   interactionsToMessages,
@@ -119,29 +118,6 @@ async function chooseActions(
 
     return schema;
   };
-
-  // const schema = createObjectSchema({
-  //   choices: {
-  //     type: 'array',
-  //     description: `An array of the chosen tools, and filled out parameters. Array must have a length of ${num} or less.`,
-  //     items: {
-  //       type: 'object',
-  //       required: ['id', 'params'],
-  //       additionalProperties: false,
-  //       properties: {
-  //         id: {
-  //           type: 'string',
-  //           description: `Must be one of the above tool ids`,
-  //         },
-  //         params: {
-  //           anyOf: actions.map((a) => a.parameters),
-  //           discriminator: { propertyName: 'id' },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
-  // console.log(schema);
 
   const responseSchema = {
     type: 'object',

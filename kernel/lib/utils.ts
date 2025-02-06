@@ -84,16 +84,23 @@ export async function getMetadata(url: string): Promise<Partial<Resource>> {
   ) as HTMLLinkElement;
 
   if (manifestLink) {
-    const manifestUrl = new URL(manifestLink.getAttribute('href'), url).href;
+    const baseUrl = new URL(url).origin;
+    console.log(baseUrl);
+    const manifestUrl = new URL(manifestLink.getAttribute('href'), baseUrl)
+      .href;
+    console.log(manifestUrl);
     const manifestText = await system.fetch(manifestUrl);
     if (manifestText) {
+      console.log(manifestText);
       const manifest = JSON.parse(manifestText);
       metadata = manifest;
-      metadata.icons = manifest.icons.map((icon) => {
-        icon.src = new URL(icon.src, manifestUrl).href;
-        console.log(icon.src);
-        return icon;
-      });
+      if (manifest.icons) {
+        metadata.icons = manifest.icons.map((icon) => {
+          icon.src = new URL(icon.src, manifestUrl).href;
+          console.log(icon.src);
+          return icon;
+        });
+      }
     }
   }
 
@@ -105,7 +112,7 @@ export async function getMetadata(url: string): Promise<Partial<Resource>> {
       metadata.name = metaAppName.content;
     } else {
       const title = dom.querySelector('title')?.innerText;
-      metadata.name = title.split(' - ')[0];
+      metadata.name = title.split(' - ')[0].split(' | ')[0];
     }
   }
 
@@ -124,8 +131,6 @@ export async function getMetadata(url: string): Promise<Partial<Resource>> {
       .querySelector('meta[name="description"]')
       ?.getAttribute('content');
   }
-
-  console.log(metadata);
 
   return metadata;
   // dom.querySelector('meta[name="description"]').getAttribute('content');

@@ -2,9 +2,10 @@ thread-view {
   flex-grow: 1;
   overflow-y: scroll;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   scroll-behavior: smooth;
-  padding: 8px 0;
+  /* padding: 8px 0; */
+  background: var(--color-page-alt);
 }
 
 .splash-screen {
@@ -73,6 +74,7 @@ thread-view {
   border: 1px solid var(--color-border);
   border-radius: 4px;
   background: var(--color-page);
+  overflow: hidden;
 }
 
 .block {

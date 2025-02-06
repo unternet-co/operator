@@ -6,16 +6,38 @@
 }
 
 :root {
+  /* Colors */
   --color-neutral-1: #111;
   --color-neutral-2: #222;
   --color-neutral-3: #616161;
   --color-neutral-4: #888;
-  --color-neutral-5: #ccc;
+  --color-neutral-5: #ababab;
   --color-neutral-6: #d2d2d2;
-  --color-neutral-7: #f1f1f1;
+  --color-neutral-7: #e9e9e9;
   --color-neutral-8: #f8f8f8;
   --color-neutral-9: #fff;
 
+  /* Spacing */
+  --space-base: 4px;
+  --space-1: calc(var(--space-base) * 0.5);
+  --space-2: calc(var(--space-base) * 1);
+  --space-3: calc(var(--space-base) * 1.5);
+  --space-4: calc(var(--space-base) * 2);
+  --space-5: calc(var(--space-base) * 3);
+  --space-6: calc(var(--space-base) * 4);
+  --space-7: calc(var(--space-base) * 5);
+  --space-8: calc(var(--space-base) * 6);
+  --space-9: calc(var(--space-base) * 7);
+
+  /* Border radius */
+  --rounded-sm: 2px;
+  --rounded: 4px;
+
+  /* Font size */
+  --text-base: 13px;
+  --text-sm: 12px;
+
+  /* Theme */
   --color-page: var(--color-neutral-9);
   --color-page-alt: var(--color-neutral-8);
   --color-command-bar: var(--color-neutral-6);
@@ -76,7 +98,7 @@ input,
 textarea {
   color: var(--color-neutral-1);
   font-family: 'iA Writer Quattro S', system-ui, sans-serif;
-  font-size: 13px;
+  font-size: var(--text-base);
 
   font-optical-sizing: auto;
   font-weight: 400;
@@ -87,7 +109,7 @@ textarea {
 }
 
 body {
-  background: var(--color-page-alt);
+  background: var(--color-page);
   color: var(--color-text);
   -webkit-overflow-scrolling: touch;
   display: flex;
@@ -105,21 +127,4 @@ body {
 
 .hidden {
   display: none;
-}
-
-.icon-button {
-  background: none;
-  border: none;
-  border-radius: 100%;
-  aspect-ratio: 1/1;
-}
-.icon-button:hover {
-  background: var(--color-neutral-7);
-}
-.icon-button img {
-  pointer-events: none;
-}
-
-applet-frame {
-  height: 330px;
 }

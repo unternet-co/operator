@@ -6,6 +6,10 @@ command-bar {
   border-top: 1px solid var(--color-border);
 }
 
+.blurred command-bar {
+  background: var(--color-page-alt);
+}
+
 command-bar .input-container {
   border-radius: 4px;
   padding: 4px;

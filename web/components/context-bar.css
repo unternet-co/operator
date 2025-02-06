@@ -9,6 +9,10 @@ context-bar {
   padding: 0 12px;
 }
 
+.blurred context-bar {
+  background: var(--color-page-alt);
+}
+
 ul.applets-list {
   list-style: none;
   display: flex;

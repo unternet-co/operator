@@ -40,6 +40,20 @@ function createWindow() {
     }
   });
 
+  /* Handle defocus */
+
+  win.on('blur', () => {
+    win.webContents.executeJavaScript(`
+      document.body.classList.add('blurred');
+    `);
+  });
+
+  win.on('focus', () => {
+    win.webContents.executeJavaScript(`
+      document.body.classList.remove('blurred');
+    `);
+  });
+
   /* Load web content */
 
   if (!app.isPackaged) {

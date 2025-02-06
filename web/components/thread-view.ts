@@ -34,35 +34,15 @@ export class ThreadView extends LitElement {
     );
     interactions.subscribe(this.updateInteractions.bind(this));
     observe(this);
-
-    // Break out of scroll if we scroll up
-    // let previousScrollY = this.scrollTop;
-    // this.addEventListener('scroll', () => {
-    //   if (this.scrollTop < previousScrollY) {
-    //     this.isFollowing = false;
-    //   }
-    //   previousScrollY = this.scrollTop;
-    // });
   }
 
   updateInteractions(newInteractions: Interaction[]) {
-    // On a new interaction, scroll to bottom
     this.prevInteractionsLength = this.interactions.length;
     this.interactions = newInteractions;
-
-    // If an interaction is updated, and we're following scroll, then scroll
-    // if (this.isFollowing) {
-    //   this.scrollTo(0, this.scrollHeight);
-    // }
   }
 
   updated(changedProperties) {
     super.updated(changedProperties);
-
-    // if (this.prevInteractionsLength < this.interactions.length) {
-    //   this.scrollTo(0, this.scrollHeight);
-    //   this.isFollowing = true;
-    // }
   }
 
   textOutputTemplate(output: TextOutput) {
@@ -73,8 +53,12 @@ export class ThreadView extends LitElement {
     const resource = this.resources.find(
       (resource) => resource.url === output.resourceUrl
     );
+
+    if (!resource) return;
     return html`<div class="data-output">
-      <img class="applet-icon" src=${resource.icons[0].src} />
+      ${resource.icons && resource.icons.length
+        ? html`<img class="applet-icon" src=${resource.icons[0].src} />`
+        : ''}
       <div class="description">
         Searched using
         <span class="applet-name">${resource.short_name || resource.name}</span>
@@ -111,13 +95,11 @@ export class ThreadView extends LitElement {
   }
 
   render() {
-    const reversedInteractions = [...this.interactions].reverse();
-
-    if (!reversedInteractions.length) {
+    if (!this.interactions.length) {
       return html`<div class="splash-screen"></div>`;
     }
     return html`${repeat(
-      reversedInteractions,
+      this.interactions,
       (interaction) => interaction.id,
       (interaction) => this.interactionTemplate(interaction)
     )}`;

@@ -1,4 +1,5 @@
 import { AppletAction } from '@web-applets/sdk';
+import { Workspace } from '../modules/workspaces';
 
 export interface IndexedAction {
   key: string;
@@ -28,4 +29,8 @@ export interface ActionChoice {
   protocol: string;
   actionId: string;
   arguments: any;
+}
+
+export interface InputOptions {
+  workspaceId: Workspace['id'];
 }

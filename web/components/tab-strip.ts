@@ -2,6 +2,7 @@ import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { tabs, type Tab } from '../features/tabs';
 import './tab-strip.css';
+import { config } from '../features/config';
 // import './icon-elem';
 
 @customElement('tab-strip')
@@ -20,6 +21,7 @@ export class TabStrip extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     tabs.subscribe(tabs.all, this.setTabs.bind(this));
+    config.subscribeToKey('activeTab', (tabId) => (this.selected = tabId));
   }
 
   setTabs(tabs: Tab[]) {
@@ -50,6 +52,10 @@ export class TabStrip extends LitElement {
     };
   }
 
+  async setActiveTab(id: Tab['id']) {
+    await config.set('activeTab', id);
+  }
+
   selectContents(elem: HTMLElement) {
     const range = document.createRange();
     range.selectNodeContents(elem);
@@ -69,7 +75,7 @@ export class TabStrip extends LitElement {
       <li
         class=${'tab-handle' + (isActive ? ' active' : '')}
         id=${'tab-handle-' + tab.id}
-        @mousedown=${() => (this.selected = tab.id)}
+        @mousedown=${() => this.setActiveTab(tab.id)}
       >
         <span
           class="tab-title"

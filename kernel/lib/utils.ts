@@ -60,7 +60,6 @@ export function decodeActionId(encodedActionURI: string): URIComponents {
   const [protocol, ...rest] = encodedActionURI.split(':');
   const [url, actionId] = rest.join(':').split('#');
 
-  console.log(protocol, url);
   return {
     protocol,
     url: url.startsWith('//') ? `${protocol}:${url}` : url,
@@ -85,19 +84,15 @@ export async function getMetadata(url: string): Promise<Partial<Resource>> {
 
   if (manifestLink) {
     const baseUrl = new URL(url).origin;
-    console.log(baseUrl);
     const manifestUrl = new URL(manifestLink.getAttribute('href'), baseUrl)
       .href;
-    console.log(manifestUrl);
     const manifestText = await system.fetch(manifestUrl);
     if (manifestText) {
-      console.log(manifestText);
       const manifest = JSON.parse(manifestText);
       metadata = manifest;
       if (manifest.icons) {
         metadata.icons = manifest.icons.map((icon) => {
           icon.src = new URL(icon.src, manifestUrl).href;
-          console.log(icon.src);
           return icon;
         });
       }

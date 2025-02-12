@@ -1,5 +1,7 @@
 import { liveQuery } from 'dexie';
 import db from '../lib/db';
+import { Workspace, workspaces } from './workspaces';
+import { InputOptions } from '../lib/types';
 
 /* Model */
 
@@ -36,11 +38,17 @@ export interface Interaction {
 
 /* Actions */
 
-async function fromInput(input: InteractionInput) {
-  return await db.interactions.add({
+async function create(input: InteractionInput, options?: InputOptions) {
+  const id = await db.interactions.add({
     input,
     outputs: [],
   });
+
+  if (options && options.workspaceId) {
+    await workspaces.addInteraction(options.workspaceId, id);
+  }
+
+  return id;
 }
 
 async function createDataOutput(
@@ -85,20 +93,25 @@ async function updateTextOutput(
 
 /* Subscriptions */
 
-function subscribe(callback: (interactions: Interaction[]) => void) {
-  return liveQuery(() => db.interactions.toArray()).subscribe(callback);
+function subscribe(
+  query: () => Interaction[],
+  callback: (interaction: Interaction[]) => void
+) {
+  return liveQuery(query).subscribe(callback);
 }
 
 /* Exports */
 
 export const interactions = {
-  fromInput,
+  create: create,
   createDataOutput,
   createTextOutput,
   updateTextOutput,
   createWebOutput,
   subscribe,
   get: db.interactions.get.bind(db.interactions),
+  bulkGet: (interactionIds: Interaction['id'][]) =>
+    db.interactions.bulkGet(interactionIds),
   destroy: db.interactions.delete.bind(db.interactions),
   clear: db.interactions.clear.bind(db.interactions),
   all: db.interactions.toArray.bind(db.interactions),

@@ -1,3 +1,4 @@
+import { liveQuery } from 'dexie';
 import db from '../lib/db';
 
 export interface Config {
@@ -21,7 +22,7 @@ async function all() {
   const items = await db.config.toArray();
   const fullConfig = {};
   for (const item of items) {
-    fullConfig[item.key] = item.value;
+    fullConfig[item.key] = JSON.parse(item.value);
   }
   return fullConfig as Config;
 }
@@ -52,14 +53,23 @@ async function write(newConfig: Config) {
   }
 }
 
+function subscribeToKey<K extends keyof Config>(
+  key: K,
+  callback: (value: Config[K]) => void
+) {
+  return liveQuery(() => config.get(key)).subscribe(callback);
+}
+
 export const config = {
   all,
   get,
   set,
   write,
+  subscribeToKey,
 };
 
 db.on('ready', async () => {
   let currentConfig = (await config.all()) || {};
+  console.log(currentConfig);
   config.write({ ...initConfig, ...currentConfig });
 });

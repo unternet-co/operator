@@ -86,8 +86,8 @@ async function chooseActions(
   num = num || 1;
   const prompt = `\
     In this environment you have access to a set of tools. Here are the functions available in JSONSchema format:
-    ${actions}
-    Choose one or more functions to call to respond to the user's query. ${hint}
+    ${JSON.stringify(actions)}
+    Choose one or more functions to call to respond to the user's query.
   `;
 
   const actionChoiceSchema = (action: ResourceAction) => {

@@ -2,6 +2,8 @@ import { InteractionInput, interactions } from './interactions';
 import { resources } from './resources';
 import { completions } from '../lib/completions';
 import { processes } from './processes';
+import { type InputOptions } from '../lib/types';
+import { Workspace, workspaces } from './workspaces';
 
 export const strategies = {
   TEXT: `Respond with a straight text response. This is appropriate for simple queries that you can provide a definitive answer to, where no research or tool use is needed, or when the prompt is a creative one or a trivial & non-controversial question.`,
@@ -13,18 +15,22 @@ async function init(appletUrls: string[]) {
   appletUrls.map((url) => resources.register(url));
 }
 
-async function handleInput(input: InteractionInput) {
+async function handleInput(
+  input: InteractionInput,
+  workspaceId: Workspace['id']
+) {
   if (input.text === 'clear') {
     interactions.clear();
     return;
   }
 
-  const interactionId = await interactions.fromInput(input);
-  const history = (await interactions.all()).slice(-10);
+  const interactionId = await interactions.create(input, { workspaceId });
+  const history = await workspaces.getInteractions(workspaceId);
+  const recentHistory = history.slice(-10);
   const actions = await resources.actions.all();
 
   const { strategy } = await completions.chooseStrategy(
-    history,
+    recentHistory,
     strategies,
     actions
   );
@@ -32,7 +38,7 @@ async function handleInput(input: InteractionInput) {
 
   if (strategy === 'TEXT') {
     const outputIndex = await interactions.createTextOutput(interactionId);
-    completions.streamText(history, (text) => {
+    completions.streamText(recentHistory, (text) => {
       interactions.updateTextOutput(interactionId, outputIndex, text);
     });
   } else if (strategy === 'SEARCH') {
@@ -49,7 +55,7 @@ async function handleInput(input: InteractionInput) {
       });
     }
 
-    const newHistory = await interactions.all();
+    const newHistory = await workspaces.getInteractions(workspaceId);
 
     const outputIndex = await interactions.createTextOutput(interactionId);
     completions.streamText(

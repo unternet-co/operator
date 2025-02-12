@@ -148,8 +148,6 @@ async function chooseActions(
     schema: responseSchema,
   });
 
-  console.log(json);
-
   return json.tools.map((choice) => {
     const { protocol, url, actionId } = decodeActionId(choice.id);
     return {

@@ -1,43 +1,58 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
+  interactions,
   Resource,
   DataOutput,
   Interaction,
-  interactions,
   TextOutput,
+  workspaces,
 } from '@unternet/kernel';
 import { resolveMarkdown } from 'lit-markdown';
 import './thread-view.css';
 import { resources } from '@unternet/kernel';
 import './applet-view';
 import { WebOutput } from '@unternet/kernel/modules/interactions';
-import { observe } from '@compactjs/chatscroll';
 import { repeat } from 'lit/directives/repeat.js';
+import { config } from '../features/config';
+import { Tab, tabs } from '../features/tabs';
+import { Subscription } from 'dexie';
 
 @customElement('thread-view')
 export class ThreadView extends LitElement {
   renderRoot = this;
 
-  isFollowing: boolean = true;
-  prevInteractionsLength: number = 0;
+  interactionSubscription: Subscription;
+
+  @property({ attribute: false })
   resources: Resource[] = [];
+
+  @property({ attribute: false })
+  tab: Interaction[] = [];
 
   @property({ attribute: false })
   interactions: Interaction[] = [];
 
   connectedCallback() {
     super.connectedCallback();
+    config.subscribeToKey('activeTab', this.updateTab.bind(this));
+
     resources.subscribe(
       resources.all,
       (resources) => (this.resources = resources)
     );
-    interactions.subscribe(this.updateInteractions.bind(this));
-    observe(this);
+  }
+
+  async updateTab(tabId: Tab['id']) {
+    const workspaceId = await tabs.getWorkspaceId(tabId);
+    this.interactionSubscription?.unsubscribe();
+    this.interactionSubscription = await workspaces.subscribeToInteractions(
+      workspaceId,
+      (interactions) => (this.interactions = interactions)
+    );
   }
 
   updateInteractions(newInteractions: Interaction[]) {
-    this.prevInteractionsLength = this.interactions.length;
     this.interactions = newInteractions;
   }
 

@@ -1,5 +1,6 @@
-export { tools, type ToolDefinition } from './modules/tools';
+export { resources, type Resource } from './modules/resources';
 export { interactions } from './modules/interactions';
+export { workspaces, type Workspace } from './modules/workspaces';
 export type {
   Interaction,
   DataOutput,

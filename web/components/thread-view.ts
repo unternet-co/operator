@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import {
-  ToolDefinition,
+  Resource,
   DataOutput,
   Interaction,
   interactions,
@@ -9,9 +9,9 @@ import {
 } from '@unternet/kernel';
 import { resolveMarkdown } from 'lit-markdown';
 import './thread-view.css';
-import { tools } from '@unternet/kernel';
+import { resources } from '@unternet/kernel';
 import './applet-view';
-import { AppletOutput } from '@unternet/kernel/modules/interactions';
+import { WebOutput } from '@unternet/kernel/modules/interactions';
 import { observe } from '@compactjs/chatscroll';
 import { repeat } from 'lit/directives/repeat.js';
 
@@ -21,49 +21,28 @@ export class ThreadView extends LitElement {
 
   isFollowing: boolean = true;
   prevInteractionsLength: number = 0;
-  tools: ToolDefinition[] = [];
+  resources: Resource[] = [];
 
   @property({ attribute: false })
   interactions: Interaction[] = [];
 
   connectedCallback() {
     super.connectedCallback();
-    tools.subscribe(tools.all, this.updateTools.bind(this));
+    resources.subscribe(
+      resources.all,
+      (resources) => (this.resources = resources)
+    );
     interactions.subscribe(this.updateInteractions.bind(this));
     observe(this);
-
-    // Break out of scroll if we scroll up
-    // let previousScrollY = this.scrollTop;
-    // this.addEventListener('scroll', () => {
-    //   if (this.scrollTop < previousScrollY) {
-    //     this.isFollowing = false;
-    //   }
-    //   previousScrollY = this.scrollTop;
-    // });
-  }
-
-  updateTools(newTools: ToolDefinition[]) {
-    this.tools = newTools;
   }
 
   updateInteractions(newInteractions: Interaction[]) {
-    // On a new interaction, scroll to bottom
     this.prevInteractionsLength = this.interactions.length;
     this.interactions = newInteractions;
-
-    // If an interaction is updated, and we're following scroll, then scroll
-    // if (this.isFollowing) {
-    //   this.scrollTo(0, this.scrollHeight);
-    // }
   }
 
   updated(changedProperties) {
     super.updated(changedProperties);
-
-    // if (this.prevInteractionsLength < this.interactions.length) {
-    //   this.scrollTo(0, this.scrollHeight);
-    //   this.isFollowing = true;
-    // }
   }
 
   textOutputTemplate(output: TextOutput) {
@@ -71,17 +50,23 @@ export class ThreadView extends LitElement {
   }
 
   dataOutputTemplate(output: DataOutput) {
-    const tool = this.tools.find((tool) => tool.url === output.appletUrl);
+    const resource = this.resources.find(
+      (resource) => resource.url === output.resourceUrl
+    );
+
+    if (!resource) return;
     return html`<div class="data-output">
-      <img class="applet-icon" src=${tool.icons[0].src} />
+      ${resource.icons && resource.icons.length
+        ? html`<img class="applet-icon" src=${resource.icons[0].src} />`
+        : ''}
       <div class="description">
         Searched using
-        <span class="applet-name">${tool.short_name || tool.name}</span>
+        <span class="applet-name">${resource.short_name || resource.name}</span>
       </div>
     </div>`;
   }
 
-  appletOutputTemplate(output: AppletOutput) {
+  appletOutputTemplate(output: WebOutput) {
     return html`<div class="applet-output">
       <applet-view processId=${output.processId}></applet-view>
     </div>`;
@@ -110,13 +95,11 @@ export class ThreadView extends LitElement {
   }
 
   render() {
-    const reversedInteractions = [...this.interactions].reverse();
-
-    if (!reversedInteractions.length) {
+    if (!this.interactions.length) {
       return html`<div class="splash-screen"></div>`;
     }
     return html`${repeat(
-      reversedInteractions,
+      this.interactions,
       (interaction) => interaction.id,
       (interaction) => this.interactionTemplate(interaction)
     )}`;

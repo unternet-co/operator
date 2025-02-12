@@ -1,13 +1,12 @@
 import { generateJson } from './model';
 import {
-  createActionSchemas,
   createObjectSchema,
   decodeActionId,
   interactionsToMessages,
 } from './utils';
 import { Interaction } from '../modules/interactions';
 import { ActionChoice } from '../lib/types';
-import { ActionDefinition, ToolDefinition } from '../modules/tools';
+import { ResourceAction, Resource } from '../modules/resources';
 import { streamText } from 'ai';
 import { openai } from './model';
 
@@ -43,10 +42,8 @@ async function streamResponse(
 async function chooseStrategy(
   history: Interaction[],
   strategies: { [key: string]: string },
-  tools: ToolDefinition[]
+  actions: ResourceAction[]
 ) {
-  const actions = createActionSchemas(tools);
-
   const prompt = `\
     In this environment you have access to a set of tools you can use to answer the user's question.
     Here are the functions available in JSONSchema format:
@@ -54,11 +51,11 @@ async function chooseStrategy(
     With the above available tools in mind, choose from one of the following strategies to use while handling the user's query:
     ${JSON.stringify(strategies)}\
   `;
-  
+
   const schema = createObjectSchema({
     strategy: {
       type: 'string',
-      enum: Object.keys(strategies)
+      enum: Object.keys(strategies),
     },
   });
 
@@ -82,20 +79,18 @@ async function chooseStrategy(
 
 async function chooseActions(
   history: Interaction[],
-  tools: ToolDefinition[],
-  num?: number
+  actions: ResourceAction[],
+  num?: number,
+  hint?: string
 ): Promise<ActionChoice[]> {
   num = num || 1;
-  // Turns all actions into flat list, with id -> `${url}#${actionId}`
-  const actions = createActionSchemas(tools);
-
   const prompt = `\
     In this environment you have access to a set of tools. Here are the functions available in JSONSchema format:
     ${JSON.stringify(actions)}
     Choose one or more functions to call to respond to the user's query.
   `;
 
-  const actionChoiceSchema = (action: ActionDefinition) => {
+  const actionChoiceSchema = (action: ResourceAction) => {
     const schema: any = {
       type: 'object',
       properties: {
@@ -125,29 +120,6 @@ async function chooseActions(
     return schema;
   };
 
-  // const schema = createObjectSchema({
-  //   choices: {
-  //     type: 'array',
-  //     description: `An array of the chosen tools, and filled out parameters. Array must have a length of ${num} or less.`,
-  //     items: {
-  //       type: 'object',
-  //       required: ['id', 'params'],
-  //       additionalProperties: false,
-  //       properties: {
-  //         id: {
-  //           type: 'string',
-  //           description: `Must be one of the above tool ids`,
-  //         },
-  //         params: {
-  //           anyOf: actions.map((a) => a.parameters),
-  //           discriminator: { propertyName: 'id' },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
-  // console.log(schema);
-
   const responseSchema = {
     type: 'object',
     properties: {
@@ -164,7 +136,6 @@ async function chooseActions(
   };
 
   const messages = await interactionsToMessages(history);
-  console.log(responseSchema);
 
   const { json } = await generateJson({
     messages: [
@@ -180,8 +151,9 @@ async function chooseActions(
   console.log(json);
 
   return json.tools.map((choice) => {
-    const [url, actionId] = decodeActionId(choice.id);
+    const { protocol, url, actionId } = decodeActionId(choice.id);
     return {
+      protocol,
       url,
       actionId,
       arguments: choice.arguments,
@@ -191,9 +163,10 @@ async function chooseActions(
 
 async function chooseAction(
   history: Interaction[],
-  tools: ToolDefinition[]
+  actions: ResourceAction[],
+  hint?: string
 ): Promise<ActionChoice> {
-  const choices = await chooseActions(history, tools, 1);
+  const choices = await chooseActions(history, actions, 1, hint);
   return choices[0];
 }
 

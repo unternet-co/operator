@@ -1,8 +1,6 @@
-import { ToolDefinition } from '../modules/tools';
 import { Interaction } from '../modules/interactions';
 import { Process, processes } from '../modules/processes';
-import { IndexedAction } from './types';
-import { loadManifest } from '@web-applets/sdk';
+import { type Resource } from '../modules/resources';
 
 export async function interactionsToMessages(interactions: Interaction[]) {
   let messages = [];
@@ -47,34 +45,95 @@ export function createObjectSchema(properties: object) {
   };
 }
 
-export function encodeActionId(url: string, actionId: string) {
-  return `${url}#${actionId}`;
-}
-export function decodeActionId(encodedActionId: string) {
-  // Returns [url, actionId]
-  return encodedActionId.split('#');
+interface URIComponents {
+  protocol?: string;
+  url: string;
+  actionId?: string;
 }
 
-export function createActionSchemas(tools: ToolDefinition[]) {
-  let schemas = [];
+export function encodeActionURI({ protocol, url, actionId }: URIComponents) {
+  return `${protocol ? protocol + ':' : ''}${url}${
+    actionId ? '#' + actionId : ''
+  }`;
+}
+export function decodeActionId(encodedActionURI: string): URIComponents {
+  const [protocol, ...rest] = encodedActionURI.split(':');
+  const [url, actionId] = rest.join(':').split('#');
 
-  for (const tool of tools) {
-    for (const action of tool.actions) {
-      schemas.push({
-        id: encodeActionId(tool.url, action.id),
-        description: action.description,
-        parameters: action.parameters,
-      });
+  console.log(protocol, url);
+  return {
+    protocol,
+    url: url.startsWith('//') ? `${protocol}:${url}` : url,
+    actionId: actionId || '',
+  };
+}
+
+function hasAllKeys(obj, keys) {
+  return keys.every((key) => key in obj);
+}
+
+export async function getMetadata(url: string): Promise<Partial<Resource>> {
+  let metadata = {} as Partial<Resource>;
+
+  url = new URL(url).href;
+  const html = await system.fetch(url);
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(html, 'text/html');
+  const manifestLink = dom.querySelector(
+    'link[rel="manifest"]'
+  ) as HTMLLinkElement;
+
+  if (manifestLink) {
+    const baseUrl = new URL(url).origin;
+    console.log(baseUrl);
+    const manifestUrl = new URL(manifestLink.getAttribute('href'), baseUrl)
+      .href;
+    console.log(manifestUrl);
+    const manifestText = await system.fetch(manifestUrl);
+    if (manifestText) {
+      console.log(manifestText);
+      const manifest = JSON.parse(manifestText);
+      metadata = manifest;
+      if (manifest.icons) {
+        metadata.icons = manifest.icons.map((icon) => {
+          icon.src = new URL(icon.src, manifestUrl).href;
+          console.log(icon.src);
+          return icon;
+        });
+      }
     }
   }
 
-  return schemas;
-}
+  if (!metadata.name) {
+    const metaAppName = dom.querySelector(
+      'meta[name="application-name"]'
+    ) as HTMLMetaElement;
+    if (metaAppName) {
+      metadata.name = metaAppName.content;
+    } else {
+      const title = dom.querySelector('title')?.innerText;
+      metadata.name = title.split(' - ')[0].split(' | ')[0];
+    }
+  }
 
-export async function getMetadata(url: string) {
-  const manifest = await loadManifest(url);
-  // TODO: Fetch metadata from normal sites
-  if (manifest) return manifest;
+  if (!metadata.icons) {
+    const faviconLink = dom.querySelector(
+      'link[rel~="icon"]'
+    ) as HTMLLinkElement;
+    if (faviconLink)
+      metadata.icons = [
+        { src: new URL(faviconLink.getAttribute('href'), url).href },
+      ];
+  }
+
+  if (!metadata.description) {
+    metadata.description = dom
+      .querySelector('meta[name="description"]')
+      ?.getAttribute('content');
+  }
+
+  return metadata;
+  // dom.querySelector('meta[name="description"]').getAttribute('content');
 }
 
 export function normalizeUrl(url, defaultProtocol: 'http' | 'https' = 'https') {

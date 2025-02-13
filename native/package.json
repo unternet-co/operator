@@ -7,8 +7,8 @@
   "author": "Rupert Manfredi <rupert@unternet.co>",
   "homepage": "https://unternet.co",
   "scripts": {
-    "dev": "electron .",
-    "package": "todesktop build"
+    "dev": "npx electron .",
+    "package": "npx todesktop build"
   },
   "license": "ISC",
   "dependencies": {

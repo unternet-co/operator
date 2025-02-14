@@ -1,4 +1,6 @@
 @import url(./reset.css);
+@import url('https://fonts.googleapis.com/css2?family=Commissioner:wght@100..900&family=Sometype+Mono:ital,wght@0,400..700;1,400..700&display=swap');
+
 
 :root {
   /* Colors */
@@ -46,6 +48,9 @@
   /* Border radius */
   --rounded-sm: 2px;
   --rounded: 4px;
+
+  --font-sans: 'Commissioner', system-ui, sans-serif;
+  --font-mono: 'Sometime Mono', monospace;
 
   /* Font size */
   --text-scale: 1.125;
@@ -115,7 +120,7 @@ body,
 input,
 textarea {
   color: var(--color-neutral-1);
-  font-family: 'iA Writer Quattro S', system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--text-base);
 
   font-optical-sizing: auto;
@@ -240,7 +245,7 @@ input.error {
 }
 
 .prose code {
-  font-family: monospace;
+  font-family: var(--font-mono);
   padding: 0.2em 0.4em;
   background: var(--color-gray-15);
   border-radius: 3px;

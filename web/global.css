@@ -241,7 +241,6 @@ input.error {
 
 .prose code {
   font-family: monospace;
-  font-size: 0.9em;
   padding: 0.2em 0.4em;
   background: var(--color-gray-15);
   border-radius: 3px;
@@ -258,7 +257,6 @@ input.error {
 .prose pre code {
   background: none;
   padding: 0;
-  font-size: 0.9em;
   color: var(--color-text);
 }
 
@@ -282,7 +280,7 @@ input.error {
 
 .prose kbd {
   font-family: var(--font-mono);
-  font-size: 0.875em;
+  font-size: var(--text-sm);
   padding: 0.2em 0.4em;
   background: var(--color-page);
   border: 1px solid var(--color-gray-40);

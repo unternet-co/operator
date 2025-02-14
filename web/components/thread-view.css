@@ -102,12 +102,12 @@ thread-view {
 
 .block code {
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--text-base);
 }
 
 .block pre {
   white-space: pre-wrap;
-  font-size: 12px;
+  font-size: var(--text-base);
   line-height: 1.3em;
   background: var(--color-neutral-8);
   padding: 20px;

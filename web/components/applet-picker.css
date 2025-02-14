@@ -75,7 +75,7 @@ applet-picker .picker-applet-list .title {
 }
 
 applet-picker .picker-applet-list h2 {
-  font-size: 1em;
+  font-size: var(--text-base);
 }
 
 applet-picker .picker-applet-list .url,
@@ -85,7 +85,7 @@ applet-picker .picker-applet-list .description {
 
 applet-picker .picker-applet-list .url {
   color: var(--color-neutral-4);
-  font-size: 12px;
+  font-size: var(--text-sm);
 }
 
 applet-picker .picker-applet-list .picker-applet-icon {

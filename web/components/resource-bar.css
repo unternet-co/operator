@@ -1,4 +1,4 @@
-context-bar {
+resource-bar {
   background: var(--color-page);
   flex-shrink: 0;
   border-top: 1px solid var(--color-border);
@@ -9,7 +9,7 @@ context-bar {
   padding: 0 12px;
 }
 
-.blurred context-bar {
+.blurred resource-bar {
   background: var(--color-page-alt);
 }
 
@@ -24,22 +24,22 @@ ul.applets-list {
   margin: 0;
 }
 
-context-bar .add-applet-container {
+resource-bar .add-applet-container {
   position: relative;
 }
 
-context-bar .applet-item {
+resource-bar .applet-item {
   display: flex;
   gap: 4px;
   align-items: center;
   flex-shrink: 0;
 }
 
-context-bar .applet-icon {
+resource-bar .applet-icon {
   width: 16px;
 }
 
-context-bar .applet-name {
+resource-bar .applet-name {
   display: block;
   font-weight: 500;
   font-size: 12px;

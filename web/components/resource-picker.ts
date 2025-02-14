@@ -1,10 +1,10 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { resources, type Resource } from '@unternet/kernel';
-import './applet-picker.css';
+import './resource-picker.css';
 
-@customElement('applet-picker')
-export class AppletPicker extends LitElement {
+@customElement('resource-picker')
+export class ResourcePicker extends LitElement {
   renderRoot = this;
   clickListener: EventListener;
 
@@ -17,6 +17,11 @@ export class AppletPicker extends LitElement {
       resources.all,
       (resources: Resource[]) => (this.resources = resources)
     );
+  }
+
+  firstUpdated() {
+    const input = this.querySelector('#filter-input') as HTMLInputElement;
+    setTimeout(() => input.focus(), 1);
   }
 
   handleSubmit(e: SubmitEvent) {
@@ -32,16 +37,21 @@ export class AppletPicker extends LitElement {
   }
 
   render() {
-    return html`<form @submit=${this.handleSubmit.bind(this)}>
-        <input name="url" type="text" placeholder="Add applet from URL..." />
-      </form>
-      <ul class="picker-applet-list">
+    return html`
+      <input
+        class="input"
+        type="text"
+        id="filter-input"
+        placeholder="Filter resources..."
+        autofocus
+      />
+      <ul class="picker-resource-list">
         ${this.resources.map(
           (resource) => html`<li>
             <div class="header">
               <div class="title">
                 <img
-                  class="picker-applet-icon"
+                  class="picker-resource-icon"
                   src=${resource.icons && resource.icons[0].src}
                 />
                 <h2>${resource.name}</h2>
@@ -57,6 +67,16 @@ export class AppletPicker extends LitElement {
             <p class="description">${resource.description}</p>
           </li>`
         )}
-      </ul>`;
+      </ul>
+      <div class="picker-button-bar">
+        <button class="button">Add</button>
+        <a
+          href="https://unternet.co/directory"
+          target="_blank"
+          class="external-link"
+          >Directory</a
+        >
+      </div>
+    `;
   }
 }

@@ -1,18 +1,18 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { resources, type Resource } from '@unternet/kernel';
-import './applet-picker';
-import './context-bar.css';
+import './resource-picker';
+import './resource-bar.css';
 
-@customElement('context-bar')
-export class ContextBar extends LitElement {
+@customElement('resource-bar')
+export class ResourceBar extends LitElement {
   renderRoot = this;
 
   @property({ attribute: false })
   resources: Resource[] = [];
 
   @property({ attribute: false })
-  isAppletPickerOpen: boolean = false;
+  isPickerOpen: boolean = true;
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -23,16 +23,16 @@ export class ContextBar extends LitElement {
 
     window.addEventListener('mousedown', (event) => {
       const target = event.target as Node;
-      const appletPickerNode = this.querySelector('applet-picker');
-      const buttonNode = this.querySelector('button');
+      const pickerNode = this.querySelector('resource-picker');
+      const buttonNode = this.querySelector('#picker-toggle-button');
       if (
-        appletPickerNode &&
-        this.isAppletPickerOpen &&
-        target !== appletPickerNode &&
+        pickerNode &&
+        this.isPickerOpen &&
+        target !== pickerNode &&
         target !== buttonNode &&
-        !appletPickerNode.contains(target)
+        !pickerNode.contains(target)
       ) {
-        this.toggleAppletPicker();
+        this.togglePicker();
       }
     });
   }
@@ -48,8 +48,8 @@ export class ContextBar extends LitElement {
     `;
   }
 
-  toggleAppletPicker() {
-    this.isAppletPickerOpen = !this.isAppletPickerOpen;
+  togglePicker() {
+    this.isPickerOpen = !this.isPickerOpen;
   }
 
   render() {
@@ -58,10 +58,11 @@ export class ContextBar extends LitElement {
         ${this.appletTemplate()}
       </ul>
       <div class="add-applet-container">
-        ${this.isAppletPickerOpen ? html`<applet-picker></applet-picker>` : ''}
+        ${this.isPickerOpen ? html`<resource-picker></resource-picker>` : ''}
         <button
-          @mousedown=${this.toggleAppletPicker.bind(this)}
+          @mousedown=${this.togglePicker.bind(this)}
           class="icon-button"
+          id="picker-toggle-button"
         >
           <img src="/icons/toolbox.svg" />
         </button>

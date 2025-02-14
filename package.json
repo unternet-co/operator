@@ -3,10 +3,10 @@
   "private": true,
   "workspaces": [
     "kernel",
-    "web"
+    "web",
+    "native"
   ],
   "scripts": {
-    "install-all": "npm install && cd native && npm install",
     "package": "cd native && npm run package",
     "build:web": "cd web && npm run build && cp -r dist/ ../dist",
     "dev:web": "cd web && npm run dev",

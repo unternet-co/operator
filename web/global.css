@@ -1,8 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+@font-face {
+  font-family: 'iA Writer Quattro S';
+  src: url('/fonts/iAWriterQuattroS-Regular.woff2');
+}
 
 @font-face {
-  font-family: IosevkaTerm;
-  src: url('/fonts/IosevkaTerm-Regular.woff2');
+  font-family: 'iA Writer Quattro S';
+  font-style: italic;
+  src: url('/fonts/iAWriterQuattroS-Italic.woff2');
+}
+
+@font-face {
+  font-family: 'iA Writer Quattro S';
+  font-weight: bold;
+  src: url('/fonts/iAWriterQuattroS-Bold.woff2');
+}
+
+@font-face {
+  font-family: 'iA Writer Quattro S';
+  font-weight: bold;
+  font-style: italic;
+  src: url('/fonts/iAWriterQuattroS-BoldItalic.woff2');
 }
 
 :root {
@@ -25,9 +42,10 @@
   --space-4: calc(var(--space-base) * 2);
   --space-5: calc(var(--space-base) * 3);
   --space-6: calc(var(--space-base) * 4);
-  --space-7: calc(var(--space-base) * 5);
-  --space-8: calc(var(--space-base) * 6);
-  --space-9: calc(var(--space-base) * 7);
+  --space-7: calc(var(--space-base) * 6);
+  --space-8: calc(var(--space-base) * 8);
+  --space-9: calc(var(--space-base) * 10);
+  --space-10: calc(var(--space-base) * 12);
 
   /* Border radius */
   --rounded-sm: 2px;
@@ -41,7 +59,7 @@
   --color-page: var(--color-neutral-9);
   --color-page-alt: var(--color-neutral-8);
   --color-command-bar: var(--color-neutral-6);
-  --color-context-bar: var(--color-neutral-7);
+  --color-resource-bar: var(--color-neutral-7);
   --color-text: var(--color-neutral-1);
   --color-text-faded: var(--color-neutral-3);
   --color-border: var(--color-neutral-6);
@@ -62,7 +80,7 @@
 
     --color-page: var(--color-neutral-8);
     --color-page-alt: var(--color-neutral-9);
-    --color-context-bar: var(--color-neutral-8);
+    --color-resource-bar: var(--color-neutral-8);
     --color-input: var(--color-neutral-9);
     --color-text-faded: var(--color-neutral-5);
   }
@@ -127,4 +145,32 @@ body {
 
 .hidden {
   display: none;
+}
+
+.input {
+  background: var(--color-page-alt);
+  border: 1px solid var(--color-border);
+  width: 100%;
+  padding: 2px 6px;
+  border-radius: 2px;
+  outline: none;
+}
+
+.button {
+  background: var(--color-page);
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  width: 100%;
+  padding: 2px 6px;
+  border-radius: 2px;
+  outline: none;
+  width: fit-content;
+}
+.button:hover {
+  background: var(--color-page-alt);
+}
+
+.external-link {
+  color: var(--color-neutral-3);
+  text-decoration: underline;
 }

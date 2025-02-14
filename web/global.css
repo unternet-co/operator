@@ -12,6 +12,25 @@
   --color-neutral-8: #f8f8f8;
   --color-neutral-9: #fff;
 
+  --color-gray-0: #fcfdff;
+  --color-gray-5: #f0f1f3;
+  --color-gray-10: #e4e5e7;
+  --color-gray-15: #d8d9db;
+  --color-gray-20: #cccdd0;
+  --color-gray-30: #b4b5b8;
+  --color-gray-40: #9c9da0;
+  --color-gray-50: #858588;
+  --color-gray-60: #6e6e71;
+  --color-gray-70: #565759;
+  --color-gray-80: #3f3f41;
+  --color-gray-90: #28282a;
+  --color-gray-100: #111112;
+
+  --color-action: #0E10A5;
+  --color-error: #D62828;
+  --color-warning: #FFD400;
+  --color-success: #60992D;
+
   /* Spacing */
   --space-base: 4px;
   --space-1: calc(var(--space-base) * 0.5);
@@ -29,16 +48,22 @@
   --rounded: 4px;
 
   /* Font size */
-  --text-base: 13px;
-  --text-sm: 12px;
+  --text-scale: 1.125;
+  --text-3xl: calc(var(--text-xxl) * var(--text-scale));
+  --text-xxl: calc(var(--text-xl) * var(--text-scale));
+  --text-xl: calc(var(--text-lg) * var(--text-scale));
+  --text-lg: calc(var(--text-base) * var(--text-scale));
+  --text-base: 14px;
+  --text-sm: calc(var(--text-base) / var(--text-scale));
+  --text-xs: calc(var(--text-sm) / var(--text-scale));
 
   /* Theme */
-  --color-page: var(--color-neutral-9);
-  --color-page-alt: var(--color-neutral-8);
+  --color-page: var(--color-gray-0);
+  --color-page-alt: var(--color-gray-5);
   --color-command-bar: var(--color-neutral-6);
   --color-context-bar: var(--color-neutral-7);
-  --color-text: var(--color-neutral-1);
-  --color-text-faded: var(--color-neutral-3);
+  --color-text: var(--color-gray-100);
+  --color-text-faded: var(--color-gray-60);
   --color-border: var(--color-neutral-6);
   --color-input: var(--color-neutral-7);
 }
@@ -67,14 +92,8 @@
   box-sizing: border-box;
 }
 
-h1,
-h2,
-h3,
-h4,
-p,
-li {
-  padding: 0;
-  margin: 0;
+a {
+  color: var(--color-action);
 }
 
 html,
@@ -122,4 +141,8 @@ body {
 
 .hidden {
   display: none;
+}
+
+.prose {
+
 }

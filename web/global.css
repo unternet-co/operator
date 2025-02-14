@@ -4,6 +4,7 @@
   font-family: IosevkaTerm;
   src: url('/fonts/IosevkaTerm-Regular.woff2');
 }
+@import url(./reset.css);
 
 :root {
   /* Colors */

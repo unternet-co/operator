@@ -26,10 +26,10 @@
   --color-gray-90: #28282a;
   --color-gray-100: #111112;
 
-  --color-action: #0E10A5;
-  --color-error: #D62828;
-  --color-warning: #FFD400;
-  --color-success: #60992D;
+  --color-action: #0f2fe4;
+  --color-error: #df4815;
+  --color-warning: #ffed68;
+  --color-success: #58bb1f;
 
   /* Spacing */
   --space-base: 4px;

@@ -179,11 +179,6 @@ h6 {
   font-weight: 500;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  margin-top: var(--space-8);
-  margin-bottom: var(--space-4);
-}
-
 input {
 
 }

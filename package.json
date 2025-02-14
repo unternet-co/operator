@@ -1,6 +1,4 @@
 {
-  "name": "@unternet/operator",
-  "private": true,
   "workspaces": [
     "kernel",
     "web",

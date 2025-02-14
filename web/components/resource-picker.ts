@@ -11,6 +11,9 @@ export class ResourcePicker extends LitElement {
   @property({ attribute: false })
   resources: Resource[] = [];
 
+  @property({ type: String })
+  filterQuery: string;
+
   connectedCallback(): void {
     super.connectedCallback();
     resources.subscribe(
@@ -32,21 +35,35 @@ export class ResourcePicker extends LitElement {
     resources.register(url);
   }
 
+  updateFilterQuery(e: InputEvent) {
+    const target = e.target as HTMLInputElement;
+    this.filterQuery = target.value;
+  }
+
   handleDelete(url: string) {
     resources.delete(url);
   }
 
   render() {
+    let filteredResources = [...this.resources];
+    let query = this.filterQuery?.toLowerCase();
+    if (!!query) {
+      filteredResources = this.resources.filter((r) => {
+        return r.name.toLowerCase().includes(query);
+      });
+    }
+
     return html`
       <input
         class="input"
         type="text"
         id="filter-input"
         placeholder="Filter resources..."
+        @input=${this.updateFilterQuery.bind(this)}
         autofocus
       />
       <ul class="picker-resource-list">
-        ${this.resources.map(
+        ${filteredResources.map(
           (resource) => html`<li>
             <div class="header">
               <div class="title">

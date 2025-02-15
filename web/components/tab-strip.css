@@ -45,7 +45,7 @@ tab-strip .tab-handle.active:not(.blurred *) {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 .blurred tab-strip .tab-handle.active {
-  color: var(--color-neutral-4);
+  color: var(--color-text-faded);
 }
 
 tab-strip .tab-handle:not(.active) {
@@ -67,7 +67,7 @@ tab-strip .tab-handle.active:hover .tab-close-button {
 }
 
 tab-strip .tab-close-button:hover {
-  background: var(--color-neutral-7);
+  background: var(--color-input);
   border-radius: 3px;
 }
 
@@ -82,7 +82,7 @@ tab-strip .icon-button {
   justify-content: center;
   -webkit-app-region: no-drag;
   border: 0;
-  color: var(--color-neutral-4);
+  color: var(--color-text);
   background: transparent;
 }
 
@@ -93,7 +93,7 @@ tab-strip .icon-button {
   aspect-ratio: 1/1;
 }
 .icon-button:hover {
-  background: var(--color-neutral-7);
+  background: var(--color-input);
 }
 .icon-button img {
   pointer-events: none;

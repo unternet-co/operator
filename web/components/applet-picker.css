@@ -45,7 +45,7 @@ applet-picker .picker-applet-list li {
 applet-picker .picker-applet-list li:hover {
   padding: 8px;
   border-bottom: 1px solid var(--color-border);
-  background: var(--color-neutral-8);
+  background: var(--color-page-alt);
   cursor: default;
 }
 
@@ -84,7 +84,7 @@ applet-picker .picker-applet-list .description {
 }
 
 applet-picker .picker-applet-list .url {
-  color: var(--color-neutral-4);
+  color: var(--color-text-faded);
   font-size: var(--text-sm);
 }
 

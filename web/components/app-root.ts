@@ -15,14 +15,6 @@ export class AppRoot extends LitElement {
   @property({ attribute: false })
   showResourcePicker: boolean;
 
-  connectedCallback() {
-    super.connectedCallback();
-    config.subscribeToKey(
-      'isResourcePickerOpen',
-      (value) => (this.showResourcePicker = value)
-    );
-  }
-
   render() {
     return html`
       <top-bar></top-bar>

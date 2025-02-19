@@ -11,7 +11,7 @@ export class Database extends Dexie {
   workspaces!: Table<Workspace, number>;
 
   constructor() {
-    super('unternet/kernel');
+    super('co.unternet.kernel');
 
     this.version(1).stores({
       workspaces: '++id',

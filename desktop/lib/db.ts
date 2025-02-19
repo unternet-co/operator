@@ -7,7 +7,7 @@ export class Database extends Dexie {
   tabs!: Table<Tab, number>;
 
   constructor() {
-    super('unternet/client');
+    super('co.unternet.ui');
 
     this.version(1).stores({
       tabs: '++id',

@@ -6,7 +6,6 @@ import './thread-view';
 import './resource-picker';
 import './resource-bar';
 import './command-bar';
-import { config } from '../features/config';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {

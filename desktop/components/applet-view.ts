@@ -36,9 +36,9 @@ export class AppletView extends LitElement {
 
   render() {
     if (!this.src) return;
-    return html`<applet-frame
-      src=${this.src}
-      .data=${this.data}
-    ></applet-frame>`;
+    return html`
+      <header class="applet-header"></header>
+      <applet-frame src=${this.src} .data=${this.data}></applet-frame>
+    `;
   }
 }

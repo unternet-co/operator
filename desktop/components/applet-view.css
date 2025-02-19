@@ -1,0 +1,7 @@
+applet-view {
+}
+
+applet-view .applet-header {
+  height: 36px;
+  border-bottom: 1px solid var(--color-border);
+}

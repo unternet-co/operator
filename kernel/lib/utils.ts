@@ -75,6 +75,7 @@ export async function getMetadata(url: string): Promise<Partial<Resource>> {
   let metadata = {} as Partial<Resource>;
 
   url = new URL(url).href;
+  // TODO: Allow importer of kernel to specify fetch function, i.e. use a proxy
   const html = await system.fetch(url);
   const parser = new DOMParser();
   const dom = parser.parseFromString(html, 'text/html');

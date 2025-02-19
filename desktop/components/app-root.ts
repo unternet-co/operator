@@ -1,19 +1,21 @@
 import { html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import './app-root.css';
 import './top-bar';
 import './thread-view';
-import './context-bar';
 import './command-bar';
-import { isElectron } from '../utils';
+import './context-bar';
 
 @customElement('app-root')
 export class AppRoot extends LitElement {
   renderRoot = this;
 
+  @property({ attribute: false })
+  showResourcePicker: boolean;
+
   render() {
     return html`
-      ${isElectron() ? html`<top-bar></top-bar>` : null}
+      <top-bar></top-bar>
       <thread-view></thread-view>
       <command-bar></command-bar>
       <context-bar></context-bar>

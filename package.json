@@ -1,16 +1,14 @@
 {
   "workspaces": [
     "kernel",
-    "web",
-    "native"
+    "desktop"
   ],
   "scripts": {
-    "package": "cd native && npm run package",
-    "build:web": "cd web && npm run build && cp -r dist/ ../dist",
-    "dev:web": "cd web && npm run dev",
-    "dev": "concurrently 'cd native && npm run dev' 'npm run dev:web'"
-  },
-  "devDependencies": {
-    "concurrently": "^9.1.0"
+    "dev": "npm run dev:desktop",
+    "build": "npm run build:desktop",
+    "package": "npm run package:desktop",
+    "package:desktop": "cd desktop && npm run package",
+    "build:desktop": "cd desktop && npm run build",
+    "dev:desktop": "cd desktop && npm run dev"
   }
 }

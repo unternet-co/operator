@@ -1,9 +1,6 @@
 const { app, BrowserWindow, shell, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
-const todesktop = require('@todesktop/runtime');
-
-todesktop.init();
 
 let mainWindow;
 
@@ -60,8 +57,7 @@ function createWindow() {
     win.loadURL('http://localhost:5173');
     win.webContents.openDevTools();
   } else {
-    // mainWindow.loadFile(path.join(__dirname, 'index.html'));
-    win.loadURL('https://operator.unternet.co');
+    mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
   }
 }
 

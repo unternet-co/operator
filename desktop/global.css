@@ -81,11 +81,12 @@
   --rounded: 4px;
 
   --font-sans: 'iA Writer Quattro', 'iA Writer Quattro S', system-ui, sans-serif;
+  --font-mono: 'iA Writer Mono', monospace;
 
   /* Font size */
   --text-scale: 1.125;
-  --text-3xl: calc(var(--text-xxl) * var(--text-scale));
-  --text-xxl: calc(var(--text-xl) * var(--text-scale));
+  --text-3xl: calc(var(--text-2xl) * var(--text-scale));
+  --text-2xl: calc(var(--text-xl) * var(--text-scale));
   --text-xl: calc(var(--text-lg) * var(--text-scale));
   --text-lg: calc(var(--text-base) * var(--text-scale));
   --text-base: 14px;
@@ -119,8 +120,8 @@ body {
   height: 100%;
   padding: 0;
   margin: 0;
-  overflow: hidden;
-  overscroll-behavior: contain;
+  /* overflow: hidden; */
+  /* overscroll-behavior: contain; */
   user-select: none;
 }
 
@@ -147,7 +148,7 @@ body {
   -webkit-overflow-scrolling: touch;
   display: flex;
   direction: column;
-  position: fixed;
+  /* position: fixed; */
   padding-bottom: env(safe-area-inset-bottom);
 }
 
@@ -167,7 +168,7 @@ h1 {
 }
 
 h2 {
-  font-size: var(--text-xxl);
+  font-size: var(--text-2xl);
 }
 
 h3 {

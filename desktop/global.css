@@ -45,19 +45,19 @@
 
 :root {
   /* Colors */
-  --color-gray-0: #fcfdff;
-  --color-gray-5: #f0f1f3;
-  --color-gray-10: #e4e5e7;
-  --color-gray-15: #d8d9db;
-  --color-gray-20: #cccdd0;
-  --color-gray-30: #b4b5b8;
-  --color-gray-40: #9c9da0;
-  --color-gray-50: #858588;
-  --color-gray-60: #6e6e71;
-  --color-gray-70: #565759;
-  --color-gray-80: #3f3f41;
-  --color-gray-90: #28282a;
-  --color-gray-100: #111112;
+  --color-neutral-0: #fcfdff;
+  --color-neutral-5: #f0f1f3;
+  --color-neutral-10: #e4e5e7;
+  --color-neutral-15: #d8d9db;
+  --color-neutral-20: #cccdd0;
+  --color-neutral-30: #b4b5b8;
+  --color-neutral-40: #9c9da0;
+  --color-neutral-50: #858588;
+  --color-neutral-60: #6e6e71;
+  --color-neutral-70: #565759;
+  --color-neutral-80: #3f3f41;
+  --color-neutral-90: #28282a;
+  --color-neutral-100: #111112;
 
   --color-action: #0f2fe4;
   --color-error: #df4815;
@@ -93,12 +93,12 @@
   --text-xs: calc(var(--text-sm) / var(--text-scale));
 
   /* Theme */
-  --color-page: var(--color-gray-0);
-  --color-page-alt: var(--color-gray-5);
-  --color-text: var(--color-gray-90);
-  --color-text-faded: var(--color-gray-60);
-  --color-border: var(--color-gray-15);
-  --color-input: var(--color-gray-15);
+  --color-page: var(--color-neutral-0);
+  --color-page-alt: var(--color-neutral-5);
+  --color-text: var(--color-neutral-90);
+  --color-text-faded: var(--color-neutral-60);
+  --color-border: var(--color-neutral-15);
+  --color-input: var(--color-neutral-15);
 }
 
 * {
@@ -252,13 +252,13 @@ input.error {
 .prose code {
   font-family: monospace;
   padding: 0.2em 0.4em;
-  background: var(--color-gray-15);
+  background: var(--color-neutral-15);
   border-radius: 3px;
 }
 
 .prose pre {
   padding: 1.5em;
-  background: var(--color-gray-15);
+  background: var(--color-neutral-15);
   border-radius: 6px;
   overflow-x: auto;
   margin-bottom: 1.5em;
@@ -273,7 +273,7 @@ input.error {
 .prose hr {
   border: none;
   border-bottom: 1px solid var(--color-page);
-  border-top: 1px solid var(--color-gray-20);
+  border-top: 1px solid var(--color-neutral-20);
   margin: var(--space-9) 0;
 }
 
@@ -292,7 +292,7 @@ input.error {
   font-size: var(--text-sm);
   padding: 0.2em 0.4em;
   background: var(--color-page);
-  border: 1px solid var(--color-gray-40);
+  border: 1px solid var(--color-neutral-40);
   border-bottom-width: 2px;
   border-radius: 4px;
 }

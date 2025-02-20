@@ -106,7 +106,7 @@ thread-view {
   white-space: pre-wrap;
   font-size: 12px;
   line-height: 1.3em;
-  background: var(--color-gray-15);
+  background: var(--color-neutral-15);
   padding: 20px;
   border-radius: var(--rounded);
   word-break: break-word;

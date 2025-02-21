@@ -10,5 +10,8 @@
     "package:desktop": "cd desktop && npm run package",
     "build:desktop": "cd desktop && npm run build",
     "dev:desktop": "cd desktop && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }

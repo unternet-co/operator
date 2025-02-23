@@ -174,3 +174,9 @@ body {
   color: var(--color-neutral-3);
   text-decoration: underline;
 }
+
+fieldset {
+  padding: 0;
+  border: 0;
+  margin: 0;
+}

@@ -4,9 +4,9 @@ import {
   decodeActionId,
   interactionsToMessages,
 } from './utils';
-import { Interaction } from '../modules/interactions';
+import { Interaction } from '../core/interactions';
 import { ActionChoice } from '../lib/types';
-import { ResourceAction, Resource } from '../modules/resources';
+import { ResourceAction, Resource } from '../core/resources';
 import { streamText } from 'ai';
 import { openai } from './model';
 

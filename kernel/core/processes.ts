@@ -72,18 +72,15 @@ async function dispatchAction(processId: number, actionChoice: ActionChoice) {
   console.log('[Operator] Applet loaded.');
   if (instance.data) applet.data = instance.data;
 
-  applet.ondata = (event: AppletDataEvent) => {
-    console.log('[Operator] Updating data', event.data);
-    processes.setAppletData(processId, event.data);
-  };
-
   console.log(
     '[Operator] Dispatching action:',
     actionChoice.actionId,
     actionChoice.arguments
   );
   await applet.dispatchAction(actionChoice.actionId, actionChoice.arguments);
-  applet.ondata = () => {};
+
+  console.log('[Operator] Updating data', applet.data);
+  processes.setAppletData(processId, applet.data);
 
   return applet.data;
 }

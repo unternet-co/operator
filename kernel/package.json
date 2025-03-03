@@ -4,7 +4,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^1.0.10",
     "@unternet/sdk": "latest",
-    "@web-applets/sdk": "^0.1.5",
+    "@web-applets/sdk": "0.2.0-alpha.6",
     "ai": "^4.0.20",
     "dexie": "^4.0.10",
     "openai": "^4.76.1",

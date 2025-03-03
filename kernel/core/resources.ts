@@ -1,4 +1,3 @@
-import { ManifestIcon } from '@web-applets/sdk';
 import { encodeActionURI, getMetadata, normalizeUrl } from '../lib/utils';
 import db from '../lib/db';
 import { liveQuery } from 'dexie';

@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Process, processes, Resource, resources } from '@unternet/kernel';
-import '@web-applets/sdk/dist/components/applet-frame';
+import '@web-applets/sdk';
 import './applet-view.css';
 
 @customElement('applet-view')

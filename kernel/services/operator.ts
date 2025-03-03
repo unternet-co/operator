@@ -1,9 +1,9 @@
-import { InteractionInput, interactions } from './interactions';
-import { resources } from './resources';
-import { completions } from '../lib/completions';
-import { processes } from './processes';
-import { type InputOptions } from '../lib/types';
-import { Workspace, workspaces } from './workspaces';
+import { InteractionInput, interactions } from './interactions.js';
+import { resources } from './resources.js';
+import { completions } from '../lib/completions.js';
+import { processes } from './processes.js';
+import { type InputOptions } from '../types.js';
+import { Workspace, workspaces } from './workspaces.js';
 
 export const strategies = {
   TEXT: `Respond with a straight text response. This is appropriate for simple queries that you can provide a definitive answer to, where no research or tool use is needed, or when the prompt is a creative one or a trivial & non-controversial question.`,

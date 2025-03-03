@@ -1,6 +1,6 @@
 import { liveQuery } from 'dexie';
-import db from '../lib/db';
-import { Interaction, interactions } from './interactions';
+import db from '../lib/db.js';
+import { Interaction, interactions } from './interactions.js';
 
 export interface Workspace {
   id?: number;

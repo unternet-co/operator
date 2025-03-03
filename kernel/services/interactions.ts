@@ -1,7 +1,8 @@
 import { liveQuery } from 'dexie';
-import db from '../lib/db';
-import { Workspace, workspaces } from './workspaces';
-import { InputOptions } from '../lib/types';
+import db from '../lib/db.js';
+import { workspaces } from './workspaces.js';
+import { InputOptions } from '../types.js';
+import { createId } from '../lib/utils.js';
 
 /* Model */
 
@@ -12,26 +13,20 @@ interface CommandInput {
   text: string;
 }
 
-export type InteractionOutput = TextOutput | DataOutput | WebOutput;
-
-export interface DataOutput {
-  type: 'data';
-  resourceUrl: string;
-  content: object;
-}
+export type InteractionOutput = TextOutput | ProcessOutput;
 
 export interface TextOutput {
   type: 'text';
   content: string;
 }
 
-export interface WebOutput {
-  type: 'web';
+export interface ProcessOutput {
+  type: 'process';
   processId: number;
 }
 
 export interface Interaction {
-  id?: number;
+  id: string;
   input: InteractionInput;
   outputs: InteractionOutput[];
 }
@@ -40,6 +35,7 @@ export interface Interaction {
 
 async function create(input: InteractionInput, options?: InputOptions) {
   const id = await db.interactions.add({
+    id: createId(),
     input,
     outputs: [],
   });

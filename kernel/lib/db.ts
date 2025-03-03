@@ -1,4 +1,4 @@
-import Dexie, { Table } from 'dexie';
+import { Dexie, Table } from 'dexie';
 import { Interaction } from '../core/interactions';
 import { Process } from '../core/processes';
 import { Resource } from '../core/resources';
@@ -14,10 +14,10 @@ export class Database extends Dexie {
     super('co.unternet.kernel');
 
     this.version(1).stores({
-      workspaces: '++id',
-      interactions: '++id',
-      processes: '++id',
-      resources: 'url',
+      workspaces: '&id',
+      interactions: '&id',
+      processes: '&id',
+      resources: '&url',
     });
   }
 }

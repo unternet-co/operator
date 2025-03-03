@@ -1,6 +1,11 @@
+import { ulid } from 'ulid';
 import { Interaction } from '../core/interactions';
 import { Process, processes } from '../core/processes';
 import { type Resource } from '../core/resources';
+
+export function createId() {
+  return ulid();
+}
 
 export async function interactionsToMessages(interactions: Interaction[]) {
   let messages = [];
@@ -47,12 +52,16 @@ export function createObjectSchema(properties: object) {
 
 interface URIComponents {
   protocol?: string;
-  url: string;
+  identifier: string;
   actionId?: string;
 }
 
-export function encodeActionURI({ protocol, url, actionId }: URIComponents) {
-  return `${protocol ? protocol + ':' : ''}${url}${
+export function encodeActionURI({
+  protocol,
+  identifier,
+  actionId,
+}: URIComponents) {
+  return `${protocol ? protocol + ':' : ''}${identifier}${
     actionId ? '#' + actionId : ''
   }`;
 }

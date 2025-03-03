@@ -13,5 +13,8 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "ulid": "^2.3.0"
   }
 }

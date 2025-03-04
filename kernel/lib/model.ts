@@ -8,6 +8,10 @@ import { generateObject,
   CoreToolMessage
 } from 'ai';
 
+export const DEFAULT_MODEL_OLLAMA = 'qwen2.5-coder:3b'
+export const DEFAULT_MODEL_OPENAI = 'gpt-4o'
+
+
 export interface modelOptions {
   type?: string,
   model?: string,
@@ -17,20 +21,20 @@ export interface modelOptions {
 
 export function fromConfig({
     type='openai',
-    model='gpt-4o',
+    model,
     apiKey=import.meta.env.VITE_OPENAI_API_KEY,
     baseURL
   }:modelOptions = {}) {
-  if (type === 'ollama') {
+  if (type === 'ollama' || !apiKey) {
     return createOllama({
       baseURL,
-    })(model);
+    })(model || DEFAULT_MODEL_OLLAMA);
   } else {
     return createOpenAI({
       apiKey,
       baseURL,
       compatibility: 'strict',
-    })(model);
+    })(model || DEFAULT_MODEL_OPENAI);
   }
 }
 

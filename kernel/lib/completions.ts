@@ -1,4 +1,3 @@
-import { generateJson } from './model';
 import {
   createObjectSchema,
   decodeActionId,
@@ -7,11 +6,25 @@ import {
 import { Interaction } from '../modules/interactions';
 import { ActionChoice } from '../lib/types';
 import { ResourceAction, Resource } from '../modules/resources';
-import { streamText } from 'ai';
-import { openai } from './model';
+import { generateObject, streamText } from 'ai';
+import {jsonSchema} from '@ai-sdk/ui-utils'
+import { fromConfig, modelOptions } from './model';
 
-interface completionsOptions {
+interface completionsOptions extends modelOptions {
   system?: string;
+}
+
+interface ToolSelection {
+  id: string,
+  arguments?: any
+}
+
+interface ToolSelections {
+  tools: ToolSelection[]
+}
+
+interface StrategySelection {
+  strategy: string
 }
 
 /* STREAM TEXT */
@@ -26,7 +39,7 @@ async function streamResponse(
     messages.push({ role: 'system', content: options.system });
 
   const { textStream } = await streamText({
-    model: openai('gpt-4o'),
+    model: fromConfig(options ?? {}),
     messages,
   });
 
@@ -42,7 +55,8 @@ async function streamResponse(
 async function chooseStrategy(
   history: Interaction[],
   strategies: { [key: string]: string },
-  actions: ResourceAction[]
+  actions: ResourceAction[],
+  options?: completionsOptions
 ) {
   const prompt = `\
     In this environment you have access to a set of tools you can use to answer the user's question.
@@ -52,16 +66,19 @@ async function chooseStrategy(
     ${JSON.stringify(strategies)}\
   `;
 
-  const schema = createObjectSchema({
+  const schema = jsonSchema(createObjectSchema({
     strategy: {
       type: 'string',
       enum: Object.keys(strategies),
     },
-  });
+  }));
 
   const messages = await interactionsToMessages(history);
 
-  const { json } = await generateJson({
+  const model = fromConfig(options ?? {})
+
+  const { object } = await generateObject({
+    model,
     messages: [
       ...messages,
       {
@@ -69,10 +86,10 @@ async function chooseStrategy(
         content: prompt,
       },
     ],
-    schema,
+    schema
   });
 
-  return json;
+  return object as StrategySelection;
 }
 
 /* ACTIONS */
@@ -81,8 +98,11 @@ async function chooseActions(
   history: Interaction[],
   actions: ResourceAction[],
   num?: number,
-  hint?: string
+  hint?: string,
+  options?: completionsOptions
 ): Promise<ActionChoice[]> {
+  const model = fromConfig(options ?? {})
+
   num = num || 1;
   const prompt = `\
     In this environment you have access to a set of tools. Here are the functions available in JSONSchema format:
@@ -120,7 +140,7 @@ async function chooseActions(
     return schema;
   };
 
-  const responseSchema = {
+  const responseSchema = jsonSchema({
     type: 'object',
     properties: {
       tools: {
@@ -133,11 +153,12 @@ async function chooseActions(
     },
     required: ['tools'],
     additionalProperties: false,
-  };
+  });
 
   const messages = await interactionsToMessages(history);
 
-  const { json } = await generateJson({
+  const { object } = await generateObject({
+    model,
     messages: [
       ...messages,
       {
@@ -148,7 +169,7 @@ async function chooseActions(
     schema: responseSchema,
   });
 
-  return json.tools.map((choice) => {
+  return (object as ToolSelections).tools.map((choice) => {
     const { protocol, url, actionId } = decodeActionId(choice.id);
     return {
       protocol,
